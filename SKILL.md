@@ -1,5 +1,5 @@
 ---
-name: hsr-databank-skill
+name: hsr-databank
 description: 崩坏：星穹铁道 (Honkai: Star Rail / 星铁 / 崩铁 / HSR) 游戏知识库。涵盖角色技能、星魂、行迹、专属效果、光锥叠影、成就查询、伤害公式（常规/击破/超击破/欢愉/DoT）、遗器套装、终局内容（混沌回忆/虚构叙事/末日幻影/异相仲裁）、战斗模拟配置等结构化数据。
 ---
 
