@@ -1,1 +1,79 @@
-# WIP
+# HSR DataBank
+
+崩坏：星穹铁道 (Honkai: Star Rail) 游戏知识库 —— 可作为 AI agent 的 skill / knowledge base 使用。
+
+提供角色、光锥、成就、伤害公式、终局内容等结构化游戏数据，让 AI agent 能够准确回答星铁相关问题并进行战斗模拟计算。
+
+> **注意**：本项目数据尚未进行系统性纠错，仅供参考。目前仅在 Claude Code 中测试和使用，建议搭配 claude-opus-4-6 及以上推理水平的模型。
+
+## 功能概览
+
+- **角色数据**：属性、技能、星魂、行迹、附加能力、专属效果，含加强效果的完整技能组
+- **光锥数据**：基础属性、叠影 S1~S5 效果
+- **成就查询**：按关键字/ID/系列搜索，支持 BWiki 关联任务深度查询
+- **伤害公式**：常规伤害、击破/超击破、欢愉伤害、持续伤害 (DoT)、防御/抗性系数
+- **战斗模拟**（测试中，暂不建议使用）：通过 UID 拉取玩家面板，生成战斗模拟配置
+- **终局内容**：混沌回忆、虚构叙事、末日幻影、异相仲裁规则
+
+## 目录结构
+
+```
+├── SKILL.md              # 核心知识库（机制、公式、术语、配置规范）
+├── data/
+│   ├── character/        # 角色档案（91 个 .md 文件，含加强状态）
+│   ├── lightcone/        # 光锥档案（161 个 .md 文件）
+│   ├── mapping_char_lc.md    # 角色-专属光锥映射
+│   ├── mapping_relic.md      # 遗器套装映射
+│   └── mapping_affix.md      # 词条映射
+├── script/               # 工具脚本
+│   ├── gen_character.py      # 生成角色数据
+│   ├── gen_lightcone.py      # 生成光锥数据
+│   ├── search_achievement.py # 成就搜索
+│   └── mihomo_to_config.py   # UID → 战斗模拟配置
+├── template/             # 回答格式模板
+│   └── achievement.md        # 成就回答模板
+└── formula/              # 伤害公式可视化参考图片
+```
+
+## 数据来源
+
+| 来源 | 用途 |
+|------|------|
+| [Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) | 角色/光锥基础数据（cn 索引） |
+| [nanoka.cc](https://hsr.nanoka.cc/) | 欢愉角色参演编号、专属效果、成就库 |
+| [MiHoMo API](https://api.mihomo.me/) | 玩家面板数据（UID 查询） |
+| [BWiki](https://wiki.biligame.com/sr/) | 成就关联任务、版本信息 |
+
+## 使用方式
+
+### 安装
+
+```bash
+npx skills add cuiko/hsr-databank-skill -g -y
+```
+
+## 知识库涵盖内容
+
+### 角色模块
+属性（7 种）与命途（9 种）、行迹构成（基础值/附加能力/技能/专属效果）、星魂系统、遗器系统
+
+### 战斗模块
+回合与轮次、行动值计算、战斗资源（战技点/能量）、行动提前与额外行动、怪物韧性条与击破效果、完整伤害公式体系
+
+### 终局内容
+混沌回忆、虚构叙事、末日幻影、异相仲裁的规则与机制
+
+### 战斗模拟配置
+数据获取流程、引导式配置、config.json 字段规范、MiHoMo 数据映射
+
+## TODO
+
+- [ ] 添加环境检测（联网工具、GitHub 访问、python/uv 可用性）
+- [ ] 战斗模拟模板
+- [ ] 国际化（English）
+- [x] 成就搜索
+- [x] 成就关联任务
+
+## License
+
+数据版权归 miHoYo/HoYoverse 所有。本项目仅供学习与研究用途。
