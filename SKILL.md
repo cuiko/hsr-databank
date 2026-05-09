@@ -1,3 +1,8 @@
+---
+name: HSR DataBank
+description: 崩坏：星穹铁道 (Honkai: Star Rail) 游戏知识库，提供角色、光锥、成就、伤害公式、终局内容等结构化数据
+---
+
 # 崩坏: 星穹铁道 (Honkai: Star Rail) - 游戏知识库
 
 崩坏：星穹铁道是米哈游（miHoYo/HoYoverse）开发的回合制策略 RPG，玩家社区常简称为**星铁**、**崩铁**或 **HSR**。游戏以回合制战斗为核心，强调属性克制、行动值管理与队伍配置策略。
