@@ -22,7 +22,7 @@
 ├── data/
 │   ├── character/        # 角色档案（91 个 .md 文件，含加强状态）
 │   ├── lightcone/        # 光锥档案（161 个 .md 文件）
-│   ├── mapping_char_lc.md    # 角色-专属光锥映射
+│   ├── mapping_char2lc.md    # 角色-专属/推荐光锥映射
 │   ├── mapping_relic.md      # 遗器套装映射
 │   └── mapping_affix.md      # 词条映射
 ├── script/               # 工具脚本
@@ -49,7 +49,7 @@
 ### 安装
 
 ```bash
-npx skills add cuiko/hsr-databank-skill -g -y
+npx skills add cuiko/hsr-databank-skill
 ```
 
 ### 使用示例
@@ -58,9 +58,9 @@ npx skills add cuiko/hsr-databank-skill -g -y
 
 **角色相关**
 - `流萤的技能是什么`
+- `流萤和大丽花的相性如何`
+- `刃加强了哪些内容`
 - `银狼LV.999的专属效果是什么`
-- `遐蝶 E1 效果`
-- `花火的附加能力有哪些`
 
 **光锥相关**
 - `于夜色中 S5 效果`
@@ -69,7 +69,7 @@ npx skills add cuiko/hsr-databank-skill -g -y
 **成就相关**
 - `搜索侦探相关的成就`
 - `银河第一骰如何完成`
-- `4.1 版本有哪些隐藏成就`
+- `猜猜我是谁的相关任务是什么`
 
 **伤害计算**
 - `黄泉 E0S1 终结技伤害怎么算`
