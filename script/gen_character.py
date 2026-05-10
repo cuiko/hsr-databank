@@ -257,9 +257,10 @@ def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
     e5_b = e5_boosts.get(sid, 0)
 
     # 描述用 E0 满级 params 渲染（不带星魂加成，反映通用基线）
+    # 可升级技能用 highlight 标记参数索引以对照参数表；不可升级（秘技等）不标
     if params_list:
         idx = max(0, min(base_lv, len(params_list)) - 1)
-        rendered = render_desc(desc, params_list[idx], highlight=True)
+        rendered = render_desc(desc, params_list[idx], highlight=(max_lvl > 1))
     else:
         rendered = desc
 
@@ -555,9 +556,9 @@ def gen_enhanced(cid):
             rname = r.get('name', '')
             rdesc = r.get('desc', '')
             p = r.get('param_list', [])
-            if p:
-                rdesc = render_desc(rdesc, p, highlight=True)
             rdesc = re.sub(r'<[^>]+>', '', rdesc)
+            if p:
+                rdesc = render_desc(rdesc, p)
             md += f'### E{rk} · {rname}\n\n> {rdesc}\n\n'
     return md
 
