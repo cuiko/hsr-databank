@@ -33,7 +33,7 @@ description: >
 | 遗器主词条/副词条 ID 与数值 | [`data/mapping_affix.md`](data/mapping_affix.md) |
 | 成就搜索（基础信息）| `script/search_achievement.py <keyword>` |
 | 单个成就的相关任务 / 所属版本 | BWiki 搜索 `https://searchwiki.biligame.com/sr/index.php?search=<成就名>`（仅深度问时拉）|
-| 玩家展柜（按 UID） | `https://api.mihomo.me/sr_info_parsed/{UID}?l=cn`（UA: `hsr-databank-skill`） |
+| 玩家展柜（按 UID） | `https://api.mihomo.me/sr_info_parsed/{UID}?l=cn`（UA: `hsr-databank`） |
 | 终局关卡敌人/buff | nanoka.cc（混沌回忆 `/maze`、虚构叙事 `/story`、末日幻影 `/boss`、异相仲裁 `/peak`） |
 | 静态游戏数据兜底 | `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn/{file}.json` |
 

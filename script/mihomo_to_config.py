@@ -8,7 +8,7 @@ Usage:
 import json, urllib.request, sys
 from pathlib import Path
 
-UA = {'User-Agent': 'hsr-databank-skill'}
+UA = {'User-Agent': 'hsr-databank'}
 
 # 副词条 type → integer ID
 SUB_AFFIX = {

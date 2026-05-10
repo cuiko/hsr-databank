@@ -11,7 +11,7 @@ Usage:
 """
 import json, re, sys, argparse, urllib.request
 
-UA = {'User-Agent': 'hsr-databank-skill', 'Referer': 'https://hsr.nanoka.cc/'}
+UA = {'User-Agent': 'hsr-databank', 'Referer': 'https://hsr.nanoka.cc/'}
 RARITY_JADE = {'Low': 5, 'Mid': 10, 'High': 20}
 RARITY_NAME = {'Low': '低', 'Mid': '中', 'High': '高'}
 

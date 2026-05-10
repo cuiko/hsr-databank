@@ -15,13 +15,13 @@ RAW = 'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn
 
 def fetch(name):
     url = f'{RAW}/{name}.json'
-    req = urllib.request.Request(url, headers={'User-Agent': 'hsr-databank-skill'})
+    req = urllib.request.Request(url, headers={'User-Agent': 'hsr-databank'})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
 def fetch_url(url):
     req = urllib.request.Request(url, headers={
-        'User-Agent': 'hsr-databank-skill',
+        'User-Agent': 'hsr-databank',
         'Referer': 'https://hsr.nanoka.cc/',
     })
     with urllib.request.urlopen(req, timeout=30) as r:

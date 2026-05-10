@@ -49,7 +49,7 @@
 ### 安装
 
 ```bash
-npx skills add cuiko/hsr-databank-skill
+npx skills add cuiko/hsr-databank
 ```
 
 ### 使用示例
