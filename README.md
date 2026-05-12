@@ -49,6 +49,7 @@
 ### 安装
 
 ```bash
+# 添加 -g 参数全局安装
 npx skills add cuiko/hsr-databank
 ```
 
