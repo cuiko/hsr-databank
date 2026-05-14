@@ -10,6 +10,14 @@ description: >
 
 崩坏：星穹铁道是米哈游（miHoYo/HoYoverse）开发的回合制策略 RPG，玩家社区常简称为**星铁**、**崩铁**或 **HSR**。游戏以回合制战斗为核心，强调属性克制、行动值管理与队伍配置策略。
 
+## 环境检测
+
+首次使用本知识库时，需确认当前环境具备以下能力，缺失项应提前告知用户：
+
+- **网页访问**：拥有可操作浏览器的 tool 或 MCP（如 Playwright、Selenium），用于访问参考链接、查询版本号等
+- **开发环境**：`python3` 和 `uv` 可用，用于运行 `script/` 下的脚本（角色/光锥生成、成就搜索、UID 转配置）
+- **网络连通**：能够访问本文档「六、参考链接」中列出的所有站点（nanoka.cc、GachaBase、Huroka、BWiki、MiHoMo API、Mar-7th StarRailRes 等）
+
 ## 使用指引
 
 本知识库包含：
@@ -64,6 +72,18 @@ description: >
 - `mihomo_to_config.py` — 通过玩家 UID 生成战斗模拟器 `config.json`
 
 > 不要因本地 `data/` 不存在某项就回复"无法回答"，应当先尝试通过远程接口或 raw JSON 查询。
+
+### 数据来源
+
+- 角色/光锥数据由 `script/` 下的脚本从 Mar-7th StarRailRes 自动生成
+- 成就数据通过 `script/search_achievement.py` 从 nanoka.cc 在线查询
+- 玩家面板通过 MiHoMo API 拉取
+
+### 约定
+
+- 脚本 HTTP 请求统一使用 `User-Agent: hsr-databank`
+- 角色档案路径：`data/character/{id}.md` / `{id}_enhanced.md`
+- 光锥档案路径：`data/lightcone/{id}.md`
 
 ---
 

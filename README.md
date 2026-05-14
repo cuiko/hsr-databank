@@ -1,5 +1,7 @@
 <h1 align="center">HSR Data Bank</h1>
 
+<p align="center">当前智库版本: v4.2.0</p>
+
 崩坏：星穹铁道 (Honkai: Star Rail) 游戏知识库 —— 可作为 AI agent 的 skill / knowledge base 使用。
 
 提供角色、光锥、成就、伤害公式、终局内容等结构化游戏数据，让 AI agent 能够准确回答星铁相关问题并进行战斗模拟计算。
@@ -99,7 +101,7 @@ npx skills add cuiko/hsr-databank
 
 **配装相关**
 ```
-11 绯英 01 爻光需要多少暴击率能满爆？
+11 绯英 01 爻光需要多少暴击率副词条能满爆？
 绯英的位面球主词条应该选攻击还是物伤？
 ```
 
@@ -125,8 +127,9 @@ npx skills add cuiko/hsr-databank
 
 ## TODO
 
-- [ ] 添加环境检测（具有页面访问能力的 tool、GitHub 访问、python/uv 可用性）
-- [ ] 战斗模拟模板
+- [x] 添加环境检测（具有页面访问能力的 tool、GitHub 访问、python/uv 可用性）
+- [ ] 战斗模拟
+  - [ ] Excel 模板
 - [ ] 国际化（English）
 - [x] 成就搜索
 - [x] 成就关联任务
