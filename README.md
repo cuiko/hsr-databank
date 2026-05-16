@@ -133,6 +133,7 @@ npx skills add cuiko/hsr-databank
 - [ ] 国际化（English）
 - [x] 成就搜索
 - [x] 成就关联任务
+- [ ] 重写 skill
 
 ## License
 

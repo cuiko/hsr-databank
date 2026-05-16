@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/cuiko/hsr-databank/config.schema.json",
-  "title": "Evanescia SR Battle Config",
-  "description": "战斗模拟器 config.json 配置文件格式，基于 evanescia-sr gameserver/src/data/game_config.zig 结构体定义",
+  "title": "HSR Battle Config",
+  "description": "战斗模拟器 config.json 配置文件格式",
   "type": "object",
   "required": ["avatar_config", "battle_config"],
   "additionalProperties": false,
