@@ -15,7 +15,7 @@ description: >
 首次使用本知识库时，需确认当前环境具备以下能力，缺失项应提前告知用户：
 
 - **网页访问**：拥有可操作浏览器的 tool 或 MCP（如 Playwright、Selenium），用于访问参考链接、查询版本号等
-- **开发环境**：`python3` 和 `uv` 可用，用于运行 `script/` 下的脚本（角色/光锥生成、成就搜索、UID 转配置）
+- **开发环境**：`python3` 和 `uv` 可用，用于运行 `scripts/` 下的脚本（角色/光锥生成、成就搜索、UID 转配置）
 - **网络连通**：能够访问本文档「六、参考链接」中列出的所有站点（nanoka.cc、GachaBase、Huroka、BWiki、MiHoMo API、Mar-7th StarRailRes 等）
 
 ## 使用指引
@@ -23,10 +23,10 @@ description: >
 本知识库包含：
 
 1. **本文档（SKILL.md）**：游戏通用机制、公式、术语、终局内容规则、战斗模拟配置规范。
-2. **`data/`**：从 [Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) 自动生成的角色 / 光锥 / 映射表静态档案。
-3. **`script/`**：可复用工具脚本（成就搜索、角色/光锥数据生成、UID 转 config 等）。
-4. **`template/`**：回答格式模板（成就等）。
-5. **`formula/`**：伤害公式可视化参考图片。
+2. **`references/`**：从 [Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) 自动生成的角色 / 光锥 / 映射表静态档案。
+3. **`scripts/`**：可复用工具脚本（成就搜索、角色/光锥数据生成、UID 转 config 等）。
+4. **`assets/`**：模板等静态资源。
+5. **`assets/formulas/`**：伤害公式可视化参考图片。
 
 > **关于示例**：本文档中列出的角色、效果等示例均非有限集合，仅为代表性举例，不代表完整列表。
 
@@ -34,27 +34,27 @@ description: >
 
 | 类型 | 路径 / 来源 |
 |------|------------|
-| 单个角色（属性/技能/星魂/行迹/附加能力/专属效果） | **若 `data/character/{id}_enhanced.md` 存在，优先用加强状态档案**；否则用 `data/character/{id}.md` |
-| 单个光锥（属性/叠影 S1~S5） | `data/lightcone/{id}.md` |
-| 角色 ↔ 专属/推荐光锥 ID 映射 | [`data/mapping_char2lc.md`](data/mapping_char2lc.md) |
-| 遗器套装 / 位面饰品 2-4pc 效果 | [`data/mapping_relic.md`](data/mapping_relic.md) |
-| 遗器主词条/副词条 ID 与数值 | [`data/mapping_affix.md`](data/mapping_affix.md) |
-| 成就搜索（基础信息）| `script/search_achievement.py <keyword>` |
+| 单个角色（属性/技能/星魂/行迹/附加能力/专属效果） | **若 `references/character/{id}-enhanced.md` 存在，优先用加强状态档案**；否则用 `references/character/{id}.md` |
+| 单个光锥（属性/叠影 S1~S5） | `references/lightcone/{id}.md` |
+| 角色 ↔ 专属/推荐光锥 ID 映射 | [`references/mapping-char2lc.md`](references/mapping-char2lc.md) |
+| 遗器套装 / 位面饰品 2-4pc 效果 | [`references/mapping-relic.md`](references/mapping-relic.md) |
+| 遗器主词条/副词条 ID 与数值 | [`references/mapping-affix.md`](references/mapping-affix.md) |
+| 成就搜索（基础信息）| `scripts/search_achievement.py <keyword>` |
 | 单个成就的相关任务 / 所属版本 | BWiki 搜索 `https://searchwiki.biligame.com/sr/index.php?search=<成就名>`（仅深度问时拉）|
 | 玩家展柜（按 UID） | `https://api.mihomo.me/sr_info_parsed/{UID}?l=cn`（UA: `hsr-databank`） |
 | 终局关卡敌人/buff | nanoka.cc（混沌回忆 `/maze`、虚构叙事 `/story`、末日幻影 `/boss`、异相仲裁 `/peak`） |
 | 静态游戏数据兜底 | `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn/{file}.json` |
 
-> **角色加强全局优先**：拥有 `_enhanced.md` 的角色，**任何场景下默认采用加强状态版本**，除非用户明确要求"未加强"才回退到 `<id>.md`。加强状态的完整数据（技能、星魂等）均在 `_enhanced.md` 中。
+> **角色加强全局优先**：拥有 `-enhanced.md` 的角色，**任何场景下默认采用加强状态版本**，除非用户明确要求"未加强"才回退到 `<id>.md`。加强状态的完整数据（技能、星魂等）均在 `-enhanced.md` 中。
 
 > **成就查询分流**：
-> - **泛查/列表**（如「光锥相关有哪些成就」「隐藏成就有多少」「某系列全部」）→ 用 `script/search_achievement.py`（拉 nanoka，只给 ID/名/描述/稀有度/星琼）
-> - **单个成就深度问**（如「〈失落的世界〉怎么完成」「为什么叫〈永冬城之夜〉」「相关任务是什么」）→ **同时**做两步：①`script/search_achievement.py` 拿基础信息 ②BWiki 搜索 `https://searchwiki.biligame.com/sr/index.php?search=<成就名>` 提取相关任务/所属版本。只要用户的问法属于深度问（完成条件、名字由来、相关任务等），就走这条路径
+> - **泛查/列表**（如「光锥相关有哪些成就」「隐藏成就有多少」「某系列全部」）→ 用 `scripts/search_achievement.py`（拉 nanoka，只给 ID/名/描述/稀有度/星琼）
+> - **单个成就深度问**（如「〈失落的世界〉怎么完成」「为什么叫〈永冬城之夜〉」「相关任务是什么」）→ **同时**做两步：①`scripts/search_achievement.py` 拿基础信息 ②BWiki 搜索 `https://searchwiki.biligame.com/sr/index.php?search=<成就名>` 提取相关任务/所属版本。只要用户的问法属于深度问（完成条件、名字由来、相关任务等），就走这条路径
 > - **搜到唯一结果时**：若用户的问法是深度问（「怎么完成」「典故」等），直接走深度流程；若只是浅问（「是什么系列」「有没有这个成就」），则只给 nanoka 基础信息，不拉 BWiki
 > - **相关任务**：若查到有相关任务，从 BWiki 任务页 `https://wiki.biligame.com/sr/<任务名>` 获取详情
 > - **不要编造完成方式**：BWiki 查不到具体完成步骤时，如实说「未查到详细完成方式」，不要把成就描述换个说法当完成步骤
 >
-> **回答格式**：见 [`template/achievement.md`](template/achievement.md)
+> **回答格式**：见 [`assets/template-resp-achievement.md`](assets/template-resp-achievement.md)
 
 > **过宽问题先反问，不要硬查**：当用户的问题命中以下场景时，**先用一句话反问让用户缩小范围**，不要直接做长流程拉取/diff/全量扫描：
 > - 跨版本 diff（如「4.1 → 4.2 新增了哪些成就」「最近版本加了什么角色」）— nanoka manifest 只保留最新版本，无法直接 diff；逐页爬 BWiki 数据量大且不可靠
@@ -65,25 +65,25 @@ description: >
 
 ### 工具脚本
 
-`script/` 目录中的可复用脚本（详见 [`script/README.md`](script/README.md)）：
+`scripts/` 目录中的可复用脚本（详见 [`scripts/README.md`](script/README.md)）：
 
 - `search_achievement.py` — 搜索 nanoka 在线成就库（关键字/系列/隐藏筛选）
-- `gen_character.py` / `gen_lightcone.py` — 重新拉取并刷新 `data/`
+- `gen_character.py` / `gen_lightcone.py` — 重新拉取并刷新 `references/`
 - `mihomo_to_config.py` — 通过玩家 UID 生成战斗模拟器 `config.json`
 
-> 不要因本地 `data/` 不存在某项就回复"无法回答"，应当先尝试通过远程接口或 raw JSON 查询。
+> 不要因本地 `references/` 不存在某项就回复"无法回答"，应当先尝试通过远程接口或 raw JSON 查询。
 
 ### 数据来源
 
-- 角色/光锥数据由 `script/` 下的脚本从 Mar-7th StarRailRes 自动生成
-- 成就数据通过 `script/search_achievement.py` 从 nanoka.cc 在线查询
+- 角色/光锥数据由 `scripts/` 下的脚本从 Mar-7th StarRailRes 自动生成
+- 成就数据通过 `scripts/search_achievement.py` 从 nanoka.cc 在线查询
 - 玩家面板通过 MiHoMo API 拉取
 
 ### 约定
 
 - 脚本 HTTP 请求统一使用 `User-Agent: hsr-databank`
-- 角色档案路径：`data/character/{id}.md` / `{id}_enhanced.md`
-- 光锥档案路径：`data/lightcone/{id}.md`
+- 角色档案路径：`references/character/{id}.md` / `{id}-enhanced.md`
+- 光锥档案路径：`references/lightcone/{id}.md`
 
 ---
 
@@ -134,7 +134,7 @@ description: >
 ### 1.3 星魂系统
 
 - 通过抽卡获得本体后，重复角色解锁**星魂**，最多 **6 次**
-- **E3** 与 **E5** 解锁的星魂会额外提升技能等级（每个角色具体加哪些技能见 `data/character/{id}.md`）
+- **E3** 与 **E5** 解锁的星魂会额外提升技能等级（每个角色具体加哪些技能见 `references/character/{id}.md`）
 
 ### 1.4 遗器系统
 
@@ -143,9 +143,9 @@ description: >
 | **遗器套装（四件套）** | 头部、手部、躯干、脚部 | 侵蚀隧洞副本 |
 | **位面饰品（两件套）** | 位面球、连结绳 | 模拟宇宙/差分宇宙沉浸奖励 |
 
-**主词条 / 副词条 ID 与具体数值**：详见 [`data/mapping_affix.md`](data/mapping_affix.md)。
+**主词条 / 副词条 ID 与具体数值**：详见 [`references/mapping-affix.md`](references/mapping-affix.md)。
 
-**完整套装效果**：详见 [`data/mapping_relic.md`](data/mapping_relic.md)。
+**完整套装效果**：详见 [`references/mapping-relic.md`](references/mapping-relic.md)。
 
 ---
 
@@ -313,7 +313,7 @@ description: >
 
 ### 2.6 伤害公式
 
-> 计算伤害时**以下方公式为准**。`formula/` 目录的图片仅作可视化参考，不应作为计算依据。
+> 计算伤害时**以下方公式为准**。`assets/formulas/` 目录的图片仅作可视化参考，不应作为计算依据。
 >
 > **⚠️ Agent 守则**：本节公式经过人工校验，**禁止自行修改**。如需修正或补充公式，必须先向用户说明改动内容并获得明确同意后才能执行编辑。
 
@@ -508,10 +508,16 @@ description: >
 
 **倍率类型与攻击类型是两个正交维度**：
 
-- **倍率类型**（伤害基于什么数值计算）：攻击力（直伤）、生命值、防御力、击破、超击破、**欢愉**
-- **攻击类型**（以什么方式出伤）：普攻、战技、终结技、追加攻击、附加伤害
+- **倍率类型**（伤害基于什么数值计算）：直伤（攻击力/生命值/防御力）、击破、超击破、**欢愉**
+- **攻击类型**（以什么方式出伤）：普攻、战技、终结技、追加攻击、附加伤害、忆灵
 
-两者可自由组合——例如绯英的"追加攻击的欢愉伤害"。增伤只作用于直伤（攻击力/生命值/防御力倍率），欢愉、击破、超击破倍率部分均不吃增伤。但欢愉倍率伤害可以吃到对应攻击类型的爆伤（如追击爆伤）。
+两者可自由组合——例如绯英的"追加攻击的欢愉伤害"。增伤只作用于直伤（攻击力/生命值/防御力倍率），欢愉、击破、超击破倍率部分均不吃增伤。
+
+> 标准天赋写法（"持有好活当赏时，释放 xx 技能对目标造成 X% 的欢愉伤害"）的欢愉伤害**不携带攻击类型标签**，因此攻击类型锁定的增伤/爆伤/易伤（如"追加攻击暴击伤害提高 X%"、"终结技易伤 X%"）对欢愉伤害**无效**；时机条件的 buff（如"释放终结技时造成的暴击伤害提高 X%"）对欢愉伤害**生效**。
+>
+> 例：绯英狐狸老师的追加攻击中，直伤部分吃追击爆伤，欢愉伤害部分不吃；但"释放追加攻击时暴伤提高"两者都能吃到。
+>
+> **例外**：银狼LV.999 天赋"强化普攻的技能伤害**改为**相同倍率的欢愉伤害"属于类型替换，替换后的欢愉伤害保留普攻的攻击类型标签，可以吃到普攻类型锁定的 buff。
 
 **代表性转换示例**：
 
@@ -599,14 +605,14 @@ description: >
 
 ### ⚠️ 数值计算原则（必读）
 
-`data/character/{id}.md` 里每个技能段的「韧性削减 / 能量回复 / 战技点变化」**只是基础值**（来自 nanoka `show_stance_list` / `sp_base` / `bp_add` 字段），**不能直接当最终值用**。模拟战斗时必须把以下来源叠加进去再算：
+`references/character/{id}.md` 里每个技能段的「韧性削减 / 能量回复 / 战技点变化」**只是基础值**（来自 nanoka `show_stance_list` / `sp_base` / `bp_add` 字段），**不能直接当最终值用**。模拟战斗时必须把以下来源叠加进去再算：
 
 | 增量来源 | 在哪里读 | 典型例子 |
 |---------|---------|---------|
 | **附加能力（行迹）** | 角色档案的「## 附加能力」段 | 花火附加能力 1「岁时记」：普攻额外 +10 能量 → 实际普攻 = 20+10 = 30 |
 | **星魂效果** | 角色档案的「## 星魂」段 | 大黑塔 E2「穿过锁孔之风」：进战斗 +1 灵感 |
-| **专属光锥被动** | `data/lightcone/{id}.md` 叠影描述 | 「向着不可追问处」S1：终结技消耗 ≥140 能量后 +1 战技点 |
-| **遗器套装效果** | `data/mapping_relic.md` | 「晨昏交界的翔鹰」4pc：终结技后行动提前 25% |
+| **专属光锥被动** | `references/lightcone/{id}.md` 叠影描述 | 「向着不可追问处」S1：终结技消耗 ≥140 能量后 +1 战技点 |
+| **遗器套装效果** | `references/mapping-relic.md` | 「晨昏交界的翔鹰」4pc：终结技后行动提前 25% |
 | **位面饰品 2pc** | 同上 | 「翁瓦克」2pc：能量恢复效率 +5% |
 | **环境 buff / 关卡机制** | nanoka 终局节查询 | 末日幻影赛季 buff、忆灵紊流、阿哈裁决象限等 |
 | **队友提供的增益** | 队友档案 | 花火战技：使队友造成的伤害提高 X% |
@@ -633,7 +639,7 @@ description: >
 询问玩家 UID 与区服后，调用脚本：
 
 ```bash
-python3 script/mihomo_to_config.py <UID> [output_path]
+python3 scripts/mihomo_to_config.py <UID> [output_path]
 ```
 
 底层调用 `https://api.mihomo.me/sr_info_parsed/{UID}?l=cn`，返回展柜全部角色（约 7~8 个，含支援），脚本按 4.2 解析规范自动拼装为 config.json。
@@ -689,7 +695,7 @@ python3 script/mihomo_to_config.py <UID> [output_path]
 
 | 字段 | 类型 / 默认 | 说明 |
 |------|------------|------|
-| `id` | int | 角色 ID（[映射表](data/mapping_char2lc.md)） |
+| `id` | int | 角色 ID（[映射表](references/mapping-char2lc.md)） |
 | `name` | string | 中文名（仅辅助阅读，以 `id` 为准） |
 | `level` / `promotion` | int | 等级 / 晋阶 |
 | `rank` | int 0-6 | 星魂数（E0-E6） |
@@ -706,12 +712,12 @@ python3 script/mihomo_to_config.py <UID> [output_path]
 {遗器ID},{等级},{主词条ID},{初始副词条数},{副词条1},{副词条2},{副词条3},{副词条4}
 ```
 
-- **遗器 ID** = `6{套装ID 3位}{部位 1-6}`（套装 ID 见 [mapping_relic.md](data/mapping_relic.md)）
+- **遗器 ID** = `6{套装ID 3位}{部位 1-6}`（套装 ID 见 [mapping-relic.md](references/mapping-relic.md)）
 - **部位**：1=头, 2=手, 3=躯干, 4=脚, 5=位面球, 6=连结绳
 - **副词条**：`{属性ID}:{词条数}:{最高档位数}`
 - 5★ Lv15 满级时，4 个副词条 cnt 之和 = 9（4 初始 + 5 强化）；`initialSubCount` 为 3 或 4
 
-**主词条 / 副词条 ID 表**：详见 [`data/mapping_affix.md`](data/mapping_affix.md)（含按部位的主词条 ID 与各档位数值）。
+**主词条 / 副词条 ID 表**：详见 [`references/mapping-affix.md`](references/mapping-affix.md)（含按部位的主词条 ID 与各档位数值）。
 
 #### battle_config
 
@@ -728,7 +734,7 @@ python3 script/mihomo_to_config.py <UID> [output_path]
 
 ### 4.4 MiHoMo parsed → config.json 映射表
 
-转换逻辑已封装在 `script/mihomo_to_config.py`，关键映射如下：
+转换逻辑已封装在 `scripts/mihomo_to_config.py`，关键映射如下：
 
 #### 副词条 type → ID（`SUB_AFFIX`）
 

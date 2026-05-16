@@ -21,20 +21,20 @@
 
 ```
 ├── SKILL.md              # 核心知识库（机制、公式、术语、配置规范）
-├── data/
+├── references/
 │   ├── character/        # 角色档案（含加强状态）
 │   ├── lightcone/        # 光锥档案
-│   ├── mapping_char2lc.md    # 角色-专属/推荐光锥映射
-│   ├── mapping_relic.md      # 遗器套装映射
-│   └── mapping_affix.md      # 词条映射
-├── script/               # 工具脚本
+│   ├── mapping-char2lc.md    # 角色-专属/推荐光锥映射
+│   ├── mapping-relic.md      # 遗器套装映射
+│   └── mapping-affix.md      # 词条映射
+├── scripts/              # 工具脚本
 │   ├── gen_character.py      # 生成角色数据
 │   ├── gen_lightcone.py      # 生成光锥数据
 │   ├── search_achievement.py # 成就搜索
 │   └── mihomo_to_config.py   # UID → 战斗模拟配置
-├── template/             # 回答格式模板
-│   └── achievement.md        # 成就回答模板
-└── formula/              # 伤害公式可视化参考图片
+└── assets/               # 模板、公式图片等静态资源
+    ├── template-resp-achievement.md  # 成就回答模板
+    └── formulas/             # 伤害公式可视化参考图片
 ```
 
 ## 数据来源

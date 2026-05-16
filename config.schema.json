@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/cuiko/hsr-databank/config.schema.json",
+  "title": "Evanescia SR Battle Config",
+  "description": "战斗模拟器 config.json 配置文件格式，基于 evanescia-sr gameserver/src/data/game_config.zig 结构体定义",
+  "type": "object",
+  "required": ["avatar_config", "battle_config"],
+  "additionalProperties": false,
+  "properties": {
+    "avatar_config": {
+      "type": "array",
+      "description": "参战角色列表（最多 4 人）",
+      "items": { "$ref": "#/$defs/Avatar" },
+      "minItems": 1,
+      "maxItems": 4
+    },
+    "battle_config": { "$ref": "#/$defs/BattleConfig" }
+  },
+  "$defs": {
+    "Avatar": {
+      "type": "object",
+      "description": "角色配置",
+      "required": ["id", "hp", "sp", "level", "promotion", "rank", "lightcone", "relics", "use_technique"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "角色中文名（仅辅助阅读，模拟器以 id 为准）"
+        },
+        "id": {
+          "type": "integer",
+          "description": "角色 ID（见 references/mapping-char2lc.md）",
+          "minimum": 1
+        },
+        "hp": {
+          "type": "integer",
+          "description": "初始生命值百分比（满血 = 100）",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "sp": {
+          "type": "integer",
+          "description": "初始能量百分比（默认 50；无常规能量角色固定 0）",
+          "default": 50,
+          "minimum": 0,
+          "maximum": 100
+        },
+        "level": {
+          "type": "integer",
+          "description": "角色等级",
+          "minimum": 1,
+          "maximum": 80
+        },
+        "promotion": {
+          "type": "integer",
+          "description": "晋阶等级",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "rank": {
+          "type": "integer",
+          "description": "星魂数（E0 = 0, E6 = 6）",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "lightcone": {
+          "oneOf": [
+            { "$ref": "#/$defs/Lightcone" },
+            { "type": "null" }
+          ],
+          "description": "装备的光锥（无光锥时为 null）"
+        },
+        "relics": {
+          "type": "array",
+          "description": "遗器列表（最多 6 件），每件为编码字符串",
+          "items": { "$ref": "#/$defs/RelicString" },
+          "maxItems": 6
+        },
+        "use_technique": {
+          "type": "boolean",
+          "description": "是否使用秘技入场",
+          "default": true
+        }
+      }
+    },
+    "Lightcone": {
+      "type": "object",
+      "description": "光锥配置",
+      "required": ["id", "rank", "level", "promotion"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "光锥 ID",
+          "minimum": 1
+        },
+        "rank": {
+          "type": "integer",
+          "description": "叠影等级（S1 = 1, S5 = 5）",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "level": {
+          "type": "integer",
+          "description": "光锥等级",
+          "minimum": 1,
+          "maximum": 80
+        },
+        "promotion": {
+          "type": "integer",
+          "description": "晋阶等级",
+          "minimum": 0,
+          "maximum": 6
+        }
+      }
+    },
+    "RelicString": {
+      "type": "string",
+      "description": "遗器编码：{遗器ID},{等级},{主词条ID},{初始副词条数},{副词条1},{副词条2},{副词条3},{副词条4}。副词条格式：{属性ID}:{词条数}:{最高档位数}。遗器 ID = 6{套装ID 3位}{部位 1-6}，部位：1=头 2=手 3=躯干 4=脚 5=位面球 6=连结绳。5★ Lv15 满级时 4 个副词条 cnt 之和 = 9。",
+      "pattern": "^\\d{5},\\d{1,2},\\d{1,2},\\d(,\\d{1,2}:\\d:\\d){0,4}$"
+    },
+    "BattleConfig": {
+      "type": "object",
+      "description": "战斗配置",
+      "required": ["battle_id", "stage_id", "cycle_count", "monster_wave", "monster_level", "blessings"],
+      "additionalProperties": false,
+      "properties": {
+        "battle_id": {
+          "type": "integer",
+          "description": "战斗编号",
+          "default": 1,
+          "minimum": 1
+        },
+        "stage_id": {
+          "type": "integer",
+          "description": "关卡 ID（指定具体关卡时填，0 表示自定义）",
+          "default": 0,
+          "minimum": 0
+        },
+        "cycle_count": {
+          "type": "integer",
+          "description": "回合上限",
+          "default": 30,
+          "minimum": 1
+        },
+        "monster_wave": {
+          "type": "array",
+          "description": "怪物波次，每个子数组为一波怪物的 monster ID 列表",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "description": "Monster ID（可在 nanoka.cc/monster/{id} 查询）",
+              "minimum": 1
+            }
+          }
+        },
+        "monster_level": {
+          "type": "integer",
+          "description": "怪物等级",
+          "default": 95,
+          "minimum": 1
+        },
+        "blessings": {
+          "type": "array",
+          "description": "祝福 ID 列表（混沌回忆/虚构叙事等终局内容的祝福）",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    }
+  }
+}

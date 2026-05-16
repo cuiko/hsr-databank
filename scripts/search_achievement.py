@@ -2,12 +2,12 @@
 """按关键字搜索 nanoka 在线成就库（每次调用从 nanoka 拉取，纯内存处理）
 
 Usage:
-  uv run python3 script/search_achievement.py <keyword>
-  uv run python3 script/search_achievement.py "光锥"
-  uv run python3 script/search_achievement.py 4010101            # 按 ID 精确查
-  uv run python3 script/search_achievement.py --series 1         # 整个系列
-  uv run python3 script/search_achievement.py --hidden           # 仅隐藏成就
-  uv run python3 script/search_achievement.py "光锥" --limit 10  # 限制返回条数
+  uv run python3 scripts/search_achievement.py <keyword>
+  uv run python3 scripts/search_achievement.py "光锥"
+  uv run python3 scripts/search_achievement.py 4010101            # 按 ID 精确查
+  uv run python3 scripts/search_achievement.py --series 1         # 整个系列
+  uv run python3 scripts/search_achievement.py --hidden           # 仅隐藏成就
+  uv run python3 scripts/search_achievement.py "光锥" --limit 10  # 限制返回条数
 """
 import json, re, sys, argparse, urllib.request
 

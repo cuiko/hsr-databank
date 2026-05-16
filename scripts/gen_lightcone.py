@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""批量生成 data/lightcone/{id}.md, 数据来源 Mar-7th StarRailRes
+"""批量生成 references/lightcone/{id}.md, 数据来源 Mar-7th StarRailRes
 
 Usage:
-  uv run python3 script/gen_lightcone.py [lightcone_id]
+  uv run python3 scripts/gen_lightcone.py [lightcone_id]
   不带参数时生成所有光锥
 """
 import json, re, sys, urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR = ROOT / 'data' / 'lightcone'
+OUT_DIR = ROOT / 'references' / 'lightcone'
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 RAW = 'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn'
 

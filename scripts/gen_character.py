@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""批量生成 data/character/{id}.md, 数据来源 Mar-7th StarRailRes
+"""批量生成 references/character/{id}.md, 数据来源 Mar-7th StarRailRes
 
 Usage:
-  uv run python3 script/gen_character.py [character_id]
+  uv run python3 scripts/gen_character.py [character_id]
   不带参数时生成所有角色
 """
 import json, re, sys, urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR = ROOT / 'data' / 'character'
+OUT_DIR = ROOT / 'references' / 'character'
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 RAW = 'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn'
 
@@ -424,7 +424,7 @@ def gen_character(cid):
     return md
 
 def gen_enhanced(cid):
-    """对有 nanoka enhanced 字段的角色生成 _enhanced.md，包含加强效果的完整技能组 + 加强要点 + 专属星魂"""
+    """对有 nanoka enhanced 字段的角色生成 -enhanced.md，包含加强效果的完整技能组 + 加强要点 + 专属星魂"""
     enh = get_enhanced_data(cid)
     if not enh: return None
     char = CHARS[cid]
@@ -575,7 +575,7 @@ def main():
                 ok += 1
             enh_md = gen_enhanced(cid)
             if enh_md:
-                (OUT_DIR / f'{cid}_enhanced.md').write_text(enh_md)
+                (OUT_DIR / f'{cid}-enhanced.md').write_text(enh_md)
                 ok += 1
         except Exception as e:
             errors.append((cid, str(e)))

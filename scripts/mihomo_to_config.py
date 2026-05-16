@@ -2,7 +2,7 @@
 """通过 MiHoMo API 将玩家 UID 数据转为模拟器 config.json 格式
 
 Usage:
-  uv run python3 script/mihomo_to_config.py <UID> [output_path]
+  uv run python3 scripts/mihomo_to_config.py <UID> [output_path]
   默认输出到 stdout, 可重定向到文件
 """
 import json, urllib.request, sys
