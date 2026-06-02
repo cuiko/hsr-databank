@@ -77,5 +77,5 @@
 ### 5. 收尾
 
 - 更新映射表（如缺）：`mapping-char2lc.md`（角色↔光锥）、`mapping-relic.md`（遗器套装）。
-- 按「推送前版本号更新」更新 README.md 顶部版本徽标。
+- 按「推送前版本号更新」更新 README.md 顶部版本徽标为 `vx.y.z` 格式。
 - 走「Commit / Push Workflow」review 后再提交。
