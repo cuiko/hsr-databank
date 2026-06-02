@@ -242,6 +242,67 @@ def get_eidolon_boosts(cid):
     e5_boosts = {b['id']: b['num'] for b in e5.get('level_up_skills', [])}
     return e3_boosts, e5_boosts
 
+SKILL_ORDER = ['普攻','强化普攻','战技','强化战技','终结技','强化终结技','天赋','欢愉技','秘技']
+
+def tree_ultimate_ids(cid):
+    """从 nanoka skill_trees 的终结技节点取规范终结技 ID 列表（按盘面顺序）。
+    该列表只含游戏技能盘展示的终结技，自动排除 Mar-7th 里的空占位条目（如乱破 131714-717）。"""
+    d = get_nanoka_char(cid)
+    if not d: return []
+    for levels in d.get('skill_trees', {}).values():
+        ids = [str(i) for i in levels.get('1', {}).get('level_up_skill_id', [])]
+        if ids and SKILLS.get(ids[0], {}).get('type_text') == '终结技':
+            return ids
+    return []
+
+def detect_enhanced_ult(cid):
+    """识别「真·第二终结技」（强化终结技）。返回技能 ID 或 None。
+    判据（数据驱动，无需枚举）：取技能盘终结技节点的技能列表，主体为第一个；
+    其余每个候选，若其技名「未出现在主终结技描述中」（银枝/昔涟，独立终结技），
+    或以「终结技【技名】」形式出现（千冶刃"获得全新终结技【…】"），即为强化终结技；
+    若以子技能形式被调用（黄泉"发动N次【啼泽雨斩】"、飞霄"发动【闪裂刃舞】"）则为
+    多段终结技的子段，跳过。同名变体（飞霄充能态）一并跳过。"""
+    ults = tree_ultimate_ids(cid)
+    if len(ults) < 2: return None
+    base = ults[0]
+    bname = SKILLS.get(base, {}).get('name', '')
+    bdesc = re.sub(r'<[^>]+>', '', SKILLS.get(base, {}).get('desc', '') or '')
+    for sid in ults[1:]:
+        sname = SKILLS.get(sid, {}).get('name', '')
+        if not sname or sname == bname:
+            continue
+        if sname not in bdesc or f'终结技【{sname}】' in bdesc:
+            return sid
+    return None
+
+def build_skill_map(char, prefix, cid=None):
+    """按 type_text 给技能分类。prefix = 技能 ID 前缀（常规 = cid；加强状态 = '1'+cid）。
+    普攻/战技 的第二个自动归为「强化xxx」（其子技能/变体不属普攻/战技，不会污染）。
+    终结技只取第一个为主体；强化终结技经 detect_enhanced_ult 判定后由 cid 传入时补入。"""
+    skill_map = {}
+    for sid in char.get('skills', []):
+        if not sid.startswith(prefix): continue
+        s = SKILLS.get(sid, {})
+        type_text = s.get('type_text', '')
+        max_lvl = s.get('max_level', 1)
+        if type_text == '普攻':
+            if max_lvl > 1 and '普攻' in skill_map:
+                skill_map.setdefault('强化普攻', sid)
+            else:
+                skill_map.setdefault('普攻', sid)
+        elif type_text == '战技' and max_lvl > 1:
+            skill_map.setdefault('强化战技' if '战技' in skill_map else '战技', sid)
+        elif type_text == '终结技':
+            skill_map.setdefault('终结技', sid)
+        elif type_text == '天赋': skill_map.setdefault('天赋', sid)
+        elif type_text == '秘技': skill_map.setdefault('秘技', sid)
+        elif type_text == '欢愉技': skill_map.setdefault('欢愉技', sid)
+    if cid:
+        enh_ult = detect_enhanced_ult(cid)
+        if enh_ult and enh_ult in SKILLS:
+            skill_map['强化终结技'] = enh_ult
+    return skill_map
+
 def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
     s = SKILLS.get(sid, {})
     if not s: return ''
@@ -331,29 +392,9 @@ def gen_character(cid):
     abils = get_additional_abilities(cid)
     e3_boosts, e5_boosts = get_eidolon_boosts(cid)
     
-    skills_ids = char.get('skills', [])
-    skill_map = {}
-    for sid in skills_ids:
-        # 跳过克隆版本（1xxxxxx 形式）, 只处理本角色的技能
-        if not sid.startswith(cid): continue
-        s = SKILLS.get(sid, {})
-        type_text = s.get('type_text', '')
-        max_lvl = s.get('max_level', 1)
-        if type_text == '普攻':
-            if max_lvl > 1 and '普攻' in skill_map:
-                skill_map.setdefault('强化普攻', sid)
-            else:
-                skill_map.setdefault('普攻', sid)
-        elif type_text == '战技' and max_lvl > 1:
-            if '战技' in skill_map:
-                skill_map.setdefault('强化战技', sid)
-            else:
-                skill_map['战技'] = sid
-        elif type_text == '终结技': skill_map.setdefault('终结技', sid)
-        elif type_text == '天赋': skill_map.setdefault('天赋', sid)
-        elif type_text == '秘技': skill_map.setdefault('秘技', sid)
-        elif type_text == '欢愉技': skill_map.setdefault('欢愉技', sid)
-    
+    # 跳过克隆版本（1xxxxxx 形式），只处理本角色 cid 前缀的技能
+    skill_map = build_skill_map(char, cid, cid=cid)
+
     elation_pid = get_elation_priority(cid) if path == '欢愉' else None
     elation_row = f'\n| 参演编号 | {elation_pid} |' if elation_pid is not None else ''
 
@@ -396,7 +437,7 @@ def gen_character(cid):
         else:
             md += f'| {pname} | +{total*100:.1f}% |\n'
     md += '\n---\n\n## 技能\n\n'
-    for label in ['普攻','强化普攻','战技','强化战技','终结技','天赋','欢愉技','秘技']:
+    for label in SKILL_ORDER:
         sid = skill_map.get(label)
         if sid:
             md += gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=cid)
@@ -439,26 +480,7 @@ def gen_enhanced(cid):
 
     # 加强状态技能 ID 形式：'1' + cid + 后缀（如 1131001 = 流萤加强状态普攻）
     enh_prefix = '1' + cid
-    enh_skill_map = {}
-    for sid in char.get('skills', []):
-        if not sid.startswith(enh_prefix): continue
-        s = SKILLS.get(sid, {})
-        type_text = s.get('type_text', '')
-        max_lvl = s.get('max_level', 1)
-        if type_text == '普攻':
-            if max_lvl > 1 and '普攻' in enh_skill_map:
-                enh_skill_map.setdefault('强化普攻', sid)
-            else:
-                enh_skill_map.setdefault('普攻', sid)
-        elif type_text == '战技' and max_lvl > 1:
-            if '战技' in enh_skill_map:
-                enh_skill_map.setdefault('强化战技', sid)
-            else:
-                enh_skill_map['战技'] = sid
-        elif type_text == '终结技': enh_skill_map.setdefault('终结技', sid)
-        elif type_text == '天赋': enh_skill_map.setdefault('天赋', sid)
-        elif type_text == '秘技': enh_skill_map.setdefault('秘技', sid)
-        elif type_text == '欢愉技': enh_skill_map.setdefault('欢愉技', sid)
+    enh_skill_map = build_skill_map(char, enh_prefix)
 
     # 共享数据（属性/命途/基础属性/行迹/附加能力 与未加强状态一致）
     rarity = char['rarity']
@@ -526,7 +548,7 @@ def gen_enhanced(cid):
     # 加强状态技能组
     if enh_skill_map:
         md += '---\n\n## 技能（加强状态）\n\n'
-        for label in ['普攻','强化普攻','战技','强化战技','终结技','天赋','欢愉技','秘技']:
+        for label in SKILL_ORDER:
             sid = enh_skill_map.get(label)
             if sid:
                 md += gen_skill_section(label, sid, e3_b, e5_b, cid=cid)
