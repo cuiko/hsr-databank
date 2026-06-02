@@ -23,25 +23,20 @@
 
 每次执行 `git push` 前，需要获取当前正式服版本号，更新 README.md 顶部的版本徽标。版本号统一使用 `vx.y.z` 格式。目前只需要正式服版本号。
 
-依次尝试以下三个站点（SKILL.md「六、参考链接 > 测试服」），任一成功即可：
+**正式服版本以 [BWiki 版本历史页](https://wiki.biligame.com/sr/版本历史) 为准**：取「新增内容一览」表格最新一行（更新时间 ≤ 今日）即当前正式服版本。测试站点的 `Live Version` 字段存在滞后（曾在 4.3 已上线时仍显示 4.2），不作为正式服版本依据。
+
+测试服版本号（大版本更新时用，见下文「大版本更新流程」）依次尝试以下三个站点（SKILL.md「六、参考链接 > 测试服」），任一成功即可：
 
 1. **nanoka.cc** (`https://hsr.nanoka.cc/`)（推荐，零点击）
-   - 使用浏览器打开首页，首页中部直接显示：
-     - `Live Version` → 正式服版本号
-     - `Latest Data Version` → 测试服版本号
-   - 右上角版本下拉菜单中，标记 `(live)` 的为正式服，标记 `(latest)` 的为测试服
+   - 使用浏览器打开首页，首页中部 `Latest Data Version` 即测试服版本号
+   - 右上角版本下拉菜单中，标记 `(latest)` 的为测试服
 
 2. **GachaBase** (`https://hsr.gachabase.net/characters?lang=chs`)
-   - 使用浏览器打开角色页，左侧边栏底部直接显示当前分支的版本标签
-   - 正式服：默认即显示，如 `v4.2.0 (REL)`
-   - 测试服：点击左上角 Settings → Branch Select 选择 `Beta` → Save Settings，页面刷新后侧边栏底部显示如 `v4.2.53 (BETA)`
+   - 使用浏览器打开角色页，点击左上角 Settings → Branch Select 选择 `Beta` → Save Settings，页面刷新后左侧边栏底部显示如 `v4.2.53 (BETA)`
 
 3. **Huroka** (`https://www.huroka.com/`)
    - 使用浏览器打开首页，点击右上角 Settings 按钮
-   - `Data Branch` 下拉菜单中同时显示 `Prod (x.x.x)` 和 `Beta (x.x.x)`
-   - `Prod` 为正式服版本，`Beta` 为测试服版本
-
-**兜底方案**：若以上三个站点均无法访问，从 [BWiki 版本历史页](https://wiki.biligame.com/sr/版本历史) 获取正式服版本号。
+   - `Data Branch` 下拉菜单中 `Beta (x.x.x)` 即测试服版本
 
 ## 大版本更新流程
 
@@ -49,9 +44,7 @@
 
 ### 1. 确认正式服当前版本
 
-- **不要只信单一来源**：nanoka.cc 首页的 `Live Version` 字段存在滞后（曾在 4.3 已上线时仍显示 4.2）。
-- **权威来源**：[BWiki 版本历史页](https://wiki.biligame.com/sr/版本历史) 的「新增内容一览」表格，最新一行即当前/最近版本，含上线日期与该版本新增的 角色 / 光锥 / 遗器 / 敌人 / 装饰。以「更新时间 ≤ 今日」判断是否已上正式服。
-- 版本号查询站点见上文「推送前版本号更新」。
+正式服版本以 [BWiki 版本历史页](https://wiki.biligame.com/sr/版本历史) 为准（见上文「推送前版本号更新」）。
 
 ### 2. 梳理本版本新增内容（从测试网站）
 
@@ -84,5 +77,5 @@
 ### 5. 收尾
 
 - 更新映射表（如缺）：`mapping-char2lc.md`（角色↔光锥）、`mapping-relic.md`（遗器套装）。
-- 版本号（README.md 顶部徽标）以 **BWiki** 正式服版本为准，按「推送前版本号更新」更新为 `vx.y.z`。
+- 按「推送前版本号更新」更新 README.md 顶部版本徽标。
 - 走「Commit / Push Workflow」review 后再提交。
