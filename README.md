@@ -20,10 +20,12 @@
 ## 目录结构
 
 ```
-├── SKILL.md              # 核心知识库（机制、公式、术语、配置规范）
+├── SKILL.md              # 知识库入口（通用机制、术语、战斗流程、查找导航）
 ├── references/
 │   ├── character/        # 角色档案（含加强状态）
 │   ├── lightcone/        # 光锥档案
+│   ├── formulas.md          # 完整伤害公式体系（按需查阅）
+│   ├── battle-sim.md        # 战斗模拟配置规范（按需查阅）
 │   ├── mapping-char2lc.md    # 角色-专属/推荐光锥映射
 │   ├── mapping-relic.md      # 遗器套装映射
 │   └── mapping-affix.md      # 词条映射
@@ -133,7 +135,7 @@ npx skills add cuiko/hsr-databank
 - [ ] 国际化（English）
 - [x] 成就搜索
 - [x] 成就关联任务
-- [ ] 重写 skill
+- [x] 重写 skill
 
 ## License
 
