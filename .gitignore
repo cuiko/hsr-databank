@@ -65,3 +65,6 @@ yarn-error.log
 # OS-specific cache
 .Spotlight-V100
 .Trashes
+
+# Skill-dev eval tooling (one-off, needs external skill-creator harness)
+evals/
