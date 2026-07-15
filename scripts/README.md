@@ -18,8 +18,13 @@ python3 scripts/<name>.py
 |------|------|
 | `gen_character.py` | 从 Mar-7th StarRailRes 拉数据生成 `references/character/{id}.md` |
 | `gen_lightcone.py` | 从 Mar-7th StarRailRes 拉数据生成 `references/lightcone/{id}.md` |
+| `gen_character_nanoka.py` | **SRR 兜底**：SRR 未收录时改用 nanoka 生成角色档案（格式对齐 `gen_character.py`） |
+| `gen_lightcone_nanoka.py` | **SRR 兜底**：SRR 未收录时改用 nanoka 生成光锥档案 |
 | `search_achievement.py` | 直接搜索 nanoka 在线成就库（不落地大文件）|
 | `mihomo_to_config.py` | 通过 MiHoMo API 将玩家 UID 转为战斗模拟器 config.json |
+
+> **兜底脚本用途**：联动/新版本刚上线时 Mar-7th StarRailRes 常滞后数天，此时原 `gen_*.py`
+> 会 KeyError。改用 `gen_*_nanoka.py <id>` 从 nanoka 测试站生成；SRR 追上后可用原脚本重生成交叉校验。
 
 ## gen_character.py
 
