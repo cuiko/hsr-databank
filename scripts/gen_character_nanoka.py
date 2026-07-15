@@ -19,6 +19,9 @@ Usage:
 import json, re, sys, urllib.request
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _hsr_common import NO_REGULAR_ENERGY
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / 'references' / 'character'
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -251,8 +254,6 @@ PROP_NAME = {
     'ImaginaryAddedRatio': '虚数属性伤害',
     'ElationDamageAddedRatioBase': '欢愉度',
 }
-NO_REGULAR_ENERGY = {'1220', '1308', '1407', '1415', '1408', '1506'}
-
 # 人工补充：协议模式的队友触发说明（nanoka/SRR 数据源均无，此处固化以扛住重生成）
 PROTOCOL_MODE_INTRO = {
     '1510': (

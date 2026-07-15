@@ -8,6 +8,9 @@ Usage:
 import json, urllib.request, sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _hsr_common import NO_REGULAR_ENERGY
+
 UA = {'User-Agent': 'hsr-databank'}
 
 # 副词条 type → integer ID
@@ -36,8 +39,6 @@ MAIN_BY_SLOT = {
         'BreakDamageAddedRatioBase': 4, 'SPRatioBase': 5},
 }
 
-# 无常规能量角色 ID（黄泉/飞霄/遐蝶/昔涟/白厄/银狼LV.999）
-NO_REGULAR_ENERGY = {'1220', '1308', '1407', '1415', '1408', '1506'}
 
 
 def fetch(url):

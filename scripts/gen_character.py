@@ -8,6 +8,9 @@ Usage:
 import json, re, sys, urllib.request
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _hsr_common import NO_REGULAR_ENERGY
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / 'references' / 'character'
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -125,7 +128,6 @@ PROP_NAME = {
     'ImaginaryAddedRatio':'虚数属性伤害',
     'ElationDamageAddedRatioBase':'欢愉度',
 }
-NO_REGULAR_ENERGY = {'1220','1308','1407','1415','1408','1506'}
 
 def is_pct_param(desc, param_idx):
     """判断 #N 占位符在 desc 中是否后跟 %"""
