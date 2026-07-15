@@ -254,6 +254,10 @@ PROP_NAME = {
     'ImaginaryAddedRatio': '虚数属性伤害',
     'ElationDamageAddedRatioBase': '欢愉度',
 }
+# 跳过 nanoka 数据里「类型标错 + 描述为空」的重复技能条目（非独立技能）。
+# 已核对 GachaBase：150909「漫不经心」被 nanoka 标为战技，实为普攻(150901)的空重复条目。
+SKILL_SKIP = {'150909'}
+
 # 人工补充：协议模式的队友触发说明（nanoka/SRR 数据源均无，此处固化以扛住重生成）
 PROTOCOL_MODE_INTRO = {
     '1510': (
@@ -423,6 +427,8 @@ def build_skill_map(char, prefix, cid=None):
     for sid in char.get('skills', []):
         if not sid.startswith(prefix):
             continue
+        if sid in SKILL_SKIP:
+            continue  # nanoka 误标 + 空描述的重复条目，跳过
         s = SKILLS.get(sid, {})
         if not s.get('name', '').strip():
             continue  # nanoka 有空名占位技能变体，SRR 会过滤，此处对齐
