@@ -21,6 +21,7 @@ python3 scripts/<name>.py
 | `gen_character_nanoka.py` | **SRR 兜底**：SRR 未收录时改用 nanoka 生成角色档案（格式对齐 `gen_character.py`） |
 | `gen_lightcone_nanoka.py` | **SRR 兜底**：SRR 未收录时改用 nanoka 生成光锥档案 |
 | `search_achievement.py` | 直接搜索 nanoka 在线成就库（不落地大文件）|
+| `search_monster.py` | 查询怪物：弱点/韧性/相位/基础属性（在线,不落地）|
 | `mihomo_to_config.py` | 通过 MiHoMo API 将玩家 UID 转为战斗模拟器 config.json |
 
 > **兜底脚本用途**：联动/新版本刚上线时 Mar-7th StarRailRes 常滞后数天，此时原 `gen_*.py`
@@ -77,6 +78,27 @@ python3 scripts/search_achievement.py "光锥" --json
 ```
 
 每次调用直接从 nanoka 拉数据，纯内存处理，不在磁盘留任何痕迹。
+
+## search_monster.py
+
+```bash
+# 关键字（中文/英文名 / ID）
+python3 scripts/search_monster.py 冰锋
+
+# 按 ID 精确查（附 韧性/相位/属性 完整机制卡片）
+python3 scripts/search_monster.py 8015050
+
+# 每个结果都拉完整属性
+python3 scripts/search_monster.py 丰饶 --full
+
+# 按 rank 过滤（Minion / MinionLv2 / Elite / LittleBoss / BigBoss）
+python3 scripts/search_monster.py --rank BigBoss
+
+# JSON 输出
+python3 scripts/search_monster.py 冰锋 --json
+```
+
+显示弱点、韧性、相位、基础属性、逐属性抗性、**技能/被动机制**、变体倍率。技能描述多为定性（少量/大量），**无精确倍率**（要倍率查 BWiki）。
 
 ## mihomo_to_config.py
 

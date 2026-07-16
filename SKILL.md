@@ -50,6 +50,7 @@ description: |
 | 成就搜索（基础信息）| `scripts/search_achievement.py <keyword>` |
 | 单个成就的相关任务 / 所属版本 | BWiki 搜索 `https://searchwiki.biligame.com/sr/index.php?search=<成就名>`（仅深度问时拉）|
 | 玩家展柜（按 UID） | `https://api.mihomo.me/sr_info_parsed/{UID}?l=cn`（UA: `hsr-databank`） |
+| 怪物/敌人（弱点/韧性/相位/属性/抗性/技能机制/变体） | `scripts/search_monster.py <关键字\|id>`（技能描述定性,无精确倍率） |
 | 终局关卡敌人/buff | nanoka.cc（混沌回忆 `/maze`、虚构叙事 `/story`、末日幻影 `/boss`、异相仲裁 `/peak`） |
 | 静态游戏数据兜底 | `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn/{file}.json` |
 
@@ -76,7 +77,8 @@ description: |
 `scripts/` 目录中的可复用脚本（详见 [`scripts/README.md`](scripts/README.md)）：
 
 - `search_achievement.py` — 搜索 nanoka 在线成就库（关键字/系列/隐藏筛选）
-- `gen_character.py` / `gen_lightcone.py` — 重新拉取并刷新 `references/`
+- `search_monster.py` — 查询怪物（弱点/韧性/相位/基础属性；关键字或 ID）
+- `gen_character.py` / `gen_lightcone.py` — 重新拉取并刷新 `references/`（SRR 冻结时用 `gen_*_nanoka.py`）
 - `mihomo_to_config.py` — 通过玩家 UID 生成战斗模拟器 `config.json`
 
 > 不要因本地 `references/` 不存在某项就回复"无法回答"，应当先尝试通过远程接口或 raw JSON 查询。
