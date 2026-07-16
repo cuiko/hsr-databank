@@ -26,8 +26,12 @@ python3 scripts/<name>.py
 > **兜底脚本用途**：联动/新版本刚上线时 Mar-7th StarRailRes 常滞后数天，此时原 `gen_*.py`
 > 会 KeyError。改用 `gen_*_nanoka.py <id>` 从 nanoka 测试站生成；SRR 追上后可用原脚本重生成交叉校验。
 >
-> **`--beta` 参数**：加 `--beta` 时输出到 `drafts/`（已 gitignore）而非 `references/`，用于把**测试服/未上线**内容先跑下来本地缓存、不入库、也省得反复查接口。上正式服后去掉 `--beta` 正式生成即可。
-> 例：`python3 scripts/gen_character_nanoka.py --beta 1512 1513`
+> **`--beta` / `--dry-run`**（仅 nanoka 兜底脚本）：
+> - `--beta`：输出到 `drafts/`（已 gitignore）而非 `references/`，把**测试服/未上线**内容本地缓存、不入库。
+>   **不带 ID 时自动**从 nanoka `manifest.json` 的 `new` 字段取测试服新增,并让 `drafts/` **只保留这些新内容**（过时的自动清除）。
+> - `--dry-run`：只打印将写入/清理哪些文件，**不落盘**（配合自动清理时先看会删什么）。
+> - 例：`python3 scripts/gen_character_nanoka.py --beta`（自动补齐测试服新角色到 drafts/）
+> - 上正式服后去掉 `--beta` 正式生成入 `references/` 即可。
 
 ## gen_character.py
 

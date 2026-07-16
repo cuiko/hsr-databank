@@ -6,8 +6,14 @@
 
 Usage:
   python3 scripts/gen_lightcone_nanoka.py 23060
-  python3 scripts/gen_lightcone_nanoka.py 23060 23061 23062   # → references/
-  python3 scripts/gen_lightcone_nanoka.py --beta 23063 23064  # 测试服 → drafts/（gitignore）
+  python3 scripts/gen_lightcone_nanoka.py 23060 23061       # 指定 ID → references/
+  python3 scripts/gen_lightcone_nanoka.py --beta 23063      # 指定 ID → drafts/（gitignore）
+  python3 scripts/gen_lightcone_nanoka.py --beta            # 不带 ID：自动取测试服新增光锥
+  python3 scripts/gen_lightcone_nanoka.py --beta --dry-run  # 只打印计划
+
+Flags:
+  --beta      输出到 drafts/（gitignore）；不带 ID 时自动从 manifest.new 取测试服新增
+  --dry-run   只打印计划，不落盘
 """
 import json, re, sys, urllib.request
 from pathlib import Path
@@ -159,26 +165,44 @@ def gen_lightcone(lc_id):
 
 def main():
     args = sys.argv[1:]
-    beta = '--beta' in args  # 测试服内容：输出到 drafts/（已 gitignore），不入库
+    beta = '--beta' in args    # 测试服内容：输出到 drafts/（已 gitignore），不入库
+    dry = '--dry-run' in args  # 只打印计划，不写盘/不删除
     ids = [a for a in args if not a.startswith('--')]
+    # --beta 不带 ID：自动从 manifest 取测试服新增光锥，并让 drafts 只保留这些新内容
+    auto = beta and not ids
+    if auto:
+        new = fetch('https://static.nanoka.cc/manifest.json')['hsr'].get('new', {})
+        ids = [str(x) for x in new.get('lightcone', [])]
+        print(f'--beta 自动：测试服新增光锥 {ids}')
     if not ids:
-        print('Usage: gen_lightcone_nanoka.py [--beta] <id> [id ...]', file=sys.stderr)
+        print('Usage: gen_lightcone_nanoka.py [--beta] [--dry-run] [id ...]'
+              '  (--beta 不带 ID = 自动取测试服新增)', file=sys.stderr)
         sys.exit(1)
     sub = 'drafts' if beta else 'references'
     out_dir = ROOT / sub / 'lightcone'
-    out_dir.mkdir(parents=True, exist_ok=True)
+    if not dry:
+        out_dir.mkdir(parents=True, exist_ok=True)
+    tag = '[dry-run] ' if dry else ''
     ok = 0
     errors = []
     for lc_id in ids:
         lc_id = str(lc_id)
         try:
             md = gen_lightcone(lc_id)
-            (out_dir / f'{lc_id}.md').write_text(md)
+            if not dry:
+                (out_dir / f'{lc_id}.md').write_text(md)
             ok += 1
-            print(f'  wrote {sub}/lightcone/{lc_id}.md')
+            print(f'  {tag}wrote {sub}/lightcone/{lc_id}.md')
         except Exception as e:
             errors.append((lc_id, repr(e)))
-    print(f'Generated {ok} files. Errors: {len(errors)}')
+    if auto:  # 只保留新内容：清掉 drafts 里不再属于测试服新增的光锥
+        keep = {f'{i}.md' for i in ids}
+        for p in out_dir.glob('*.md') if out_dir.exists() else []:
+            if p.name not in keep:
+                if not dry:
+                    p.unlink()
+                print(f'  {tag}pruned {sub}/lightcone/{p.name}')
+    print(f'{tag}Generated {ok} files. Errors: {len(errors)}')
     for lc_id, e in errors:
         print(f'  {lc_id}: {e}')
 

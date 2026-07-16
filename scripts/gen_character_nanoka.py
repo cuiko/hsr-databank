@@ -9,9 +9,15 @@ gen_character.py 已在使用的 5 个结构（CHARS/PROMO/SKILLS/RANKS/TREES）
 同一套渲染逻辑，确保产物格式一致。
 
 Usage:
-  python3 scripts/gen_character_nanoka.py 1508          # 单个角色 → references/
-  python3 scripts/gen_character_nanoka.py 1508 1509 1510
-  python3 scripts/gen_character_nanoka.py --beta 1512   # 测试服 → drafts/（gitignore，不入库）
+  python3 scripts/gen_character_nanoka.py 1508 1509        # 指定 ID → references/
+  python3 scripts/gen_character_nanoka.py --beta 1512      # 指定 ID → drafts/（gitignore）
+  python3 scripts/gen_character_nanoka.py --beta           # 不带 ID：自动取测试服新增，
+                                                           #   写 drafts/ 并只保留这些新内容
+  python3 scripts/gen_character_nanoka.py --beta --dry-run # 只打印计划，不写盘/不删除
+
+Flags:
+  --beta      输出到 drafts/（gitignore，不入库）；不带 ID 时自动从 manifest.new 取测试服新增
+  --dry-run   只打印将写入/清理哪些文件，不实际落盘
 
 已知局限（需人工复核）：
   - E3/E5 技能等级提升表由星魂描述解析重建（"战技等级+2"等），个别角色可能需校正。
@@ -634,14 +640,24 @@ def gen_character(cid):
 
 def main():
     args = sys.argv[1:]
-    beta = '--beta' in args  # 测试服内容：输出到 drafts/（已 gitignore），不入库
+    beta = '--beta' in args    # 测试服内容：输出到 drafts/（已 gitignore），不入库
+    dry = '--dry-run' in args  # 只打印计划，不写盘/不删除
     ids = [a for a in args if not a.startswith('--')]
+    # --beta 不带 ID：自动从 manifest 取测试服新增角色，并让 drafts 只保留这些新内容
+    auto = beta and not ids
+    if auto:
+        new = fetch('https://static.nanoka.cc/manifest.json')['hsr'].get('new', {})
+        ids = [str(x) for x in new.get('character', [])]
+        print(f'--beta 自动：测试服新增角色 {ids}')
     if not ids:
-        print('Usage: gen_character_nanoka.py [--beta] <id> [id ...]', file=sys.stderr)
+        print('Usage: gen_character_nanoka.py [--beta] [--dry-run] [id ...]'
+              '  (--beta 不带 ID = 自动取测试服新增)', file=sys.stderr)
         sys.exit(1)
     sub = 'drafts' if beta else 'references'
     out_dir = ROOT / sub / 'character'
-    out_dir.mkdir(parents=True, exist_ok=True)
+    if not dry:
+        out_dir.mkdir(parents=True, exist_ok=True)
+    tag = '[dry-run] ' if dry else ''
     ok = 0
     errors = []
     for cid in ids:
@@ -650,12 +666,20 @@ def main():
             load_char(cid)
             md = gen_character(cid)
             if md:
-                (out_dir / f'{cid}.md').write_text(md)
+                if not dry:
+                    (out_dir / f'{cid}.md').write_text(md)
                 ok += 1
-                print(f'  wrote {sub}/character/{cid}.md')
+                print(f'  {tag}wrote {sub}/character/{cid}.md')
         except Exception as e:
             errors.append((cid, repr(e)))
-    print(f'Generated {ok} files. Errors: {len(errors)}')
+    if auto:  # 只保留新内容：清掉 drafts 里不再属于测试服新增的角色
+        keep = {f'{i}.md' for i in ids}
+        for p in out_dir.glob('*.md') if out_dir.exists() else []:
+            if p.name not in keep:
+                if not dry:
+                    p.unlink()
+                print(f'  {tag}pruned {sub}/character/{p.name}')
+    print(f'{tag}Generated {ok} files. Errors: {len(errors)}')
     for cid, e in errors:
         print(f'  {cid}: {e}')
 
