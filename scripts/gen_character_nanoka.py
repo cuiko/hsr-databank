@@ -103,8 +103,11 @@ def load_char(cid):
     skill_ids = [str(k) for k in d.get('skills', {}).keys()]
     tree_ids = [str(pv['1']['point_id']) for pv in d.get('skill_trees', {}).values() if '1' in pv]
 
+    name = strip_tags(d['name'])
+    if '{' in name or not name:  # 开拓者名字为 {NICKNAME} 占位符 → 按命途命名（开拓者·毁灭 等）
+        name = '开拓者·' + PATH_CN.get(d.get('base_type'), d.get('base_type') or '')
     CHARS[cid] = {
-        'id': cid, 'name': strip_tags(d['name']), 'rarity': rarity_int(d.get('rarity')),
+        'id': cid, 'name': name, 'rarity': rarity_int(d.get('rarity')),
         'path': d.get('base_type'), 'element': d.get('damage_type'),
         'max_sp': d.get('sp_need'), 'ranks': rank_ids, 'skills': skill_ids,
         'skill_trees': tree_ids,
@@ -544,8 +547,6 @@ def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
 
 
 def gen_character(cid):
-    if int(cid) >= 8000:
-        return None
     char = CHARS[cid]
     name = char['name']
     rarity = char['rarity']
