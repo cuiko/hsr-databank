@@ -9,8 +9,9 @@ gen_character.py 已在使用的 5 个结构（CHARS/PROMO/SKILLS/RANKS/TREES）
 同一套渲染逻辑，确保产物格式一致。
 
 Usage:
-  python3 scripts/gen_character_nanoka.py 1508          # 单个角色
+  python3 scripts/gen_character_nanoka.py 1508          # 单个角色 → references/
   python3 scripts/gen_character_nanoka.py 1508 1509 1510
+  python3 scripts/gen_character_nanoka.py --beta 1512   # 测试服 → drafts/（gitignore，不入库）
 
 已知局限（需人工复核）：
   - E3/E5 技能等级提升表由星魂描述解析重建（"战技等级+2"等），个别角色可能需校正。
@@ -23,8 +24,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _hsr_common import NO_REGULAR_ENERGY
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR = ROOT / 'references' / 'character'
-OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 UA = {'User-Agent': 'hsr-databank', 'Referer': 'https://hsr.nanoka.cc/'}
 
@@ -447,8 +446,8 @@ def build_skill_map(char, prefix, cid=None):
             skill_map.setdefault('天赋', []).append(sid)
         elif type_text == '秘技':
             skill_map.setdefault('秘技', sid)
-        elif type_text == '欢愉技':
-            skill_map.setdefault('欢愉技', sid)
+        elif type_text == '欢愉技':  # 部分角色有多个欢愉技（如砂金•戏浪的举杯/All in）
+            skill_map.setdefault('欢愉技', []).append(sid)
         elif type_text == '助战技':  # 4.4 新增技能类型（姬子•启行等），可有多个
             dsc = s.get('desc', '')
             # 「进入【…】状态」型助战技本质是模式/状态（如姬子的裁决/歼破），单列到协议模式
@@ -634,10 +633,15 @@ def gen_character(cid):
 
 
 def main():
-    ids = sys.argv[1:]
+    args = sys.argv[1:]
+    beta = '--beta' in args  # 测试服内容：输出到 drafts/（已 gitignore），不入库
+    ids = [a for a in args if not a.startswith('--')]
     if not ids:
-        print('Usage: gen_character_nanoka.py <id> [id ...]', file=sys.stderr)
+        print('Usage: gen_character_nanoka.py [--beta] <id> [id ...]', file=sys.stderr)
         sys.exit(1)
+    sub = 'drafts' if beta else 'references'
+    out_dir = ROOT / sub / 'character'
+    out_dir.mkdir(parents=True, exist_ok=True)
     ok = 0
     errors = []
     for cid in ids:
@@ -646,9 +650,9 @@ def main():
             load_char(cid)
             md = gen_character(cid)
             if md:
-                (OUT_DIR / f'{cid}.md').write_text(md)
+                (out_dir / f'{cid}.md').write_text(md)
                 ok += 1
-                print(f'  wrote {cid}.md')
+                print(f'  wrote {sub}/character/{cid}.md')
         except Exception as e:
             errors.append((cid, repr(e)))
     print(f'Generated {ok} files. Errors: {len(errors)}')

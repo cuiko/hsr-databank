@@ -6,14 +6,13 @@
 
 Usage:
   python3 scripts/gen_lightcone_nanoka.py 23060
-  python3 scripts/gen_lightcone_nanoka.py 23060 23061 23062
+  python3 scripts/gen_lightcone_nanoka.py 23060 23061 23062   # → references/
+  python3 scripts/gen_lightcone_nanoka.py --beta 23063 23064  # 测试服 → drafts/（gitignore）
 """
 import json, re, sys, urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR = ROOT / 'references' / 'lightcone'
-OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 UA = {'User-Agent': 'hsr-databank', 'Referer': 'https://hsr.nanoka.cc/'}
 
@@ -159,19 +158,24 @@ def gen_lightcone(lc_id):
 
 
 def main():
-    ids = sys.argv[1:]
+    args = sys.argv[1:]
+    beta = '--beta' in args  # 测试服内容：输出到 drafts/（已 gitignore），不入库
+    ids = [a for a in args if not a.startswith('--')]
     if not ids:
-        print('Usage: gen_lightcone_nanoka.py <id> [id ...]', file=sys.stderr)
+        print('Usage: gen_lightcone_nanoka.py [--beta] <id> [id ...]', file=sys.stderr)
         sys.exit(1)
+    sub = 'drafts' if beta else 'references'
+    out_dir = ROOT / sub / 'lightcone'
+    out_dir.mkdir(parents=True, exist_ok=True)
     ok = 0
     errors = []
     for lc_id in ids:
         lc_id = str(lc_id)
         try:
             md = gen_lightcone(lc_id)
-            (OUT_DIR / f'{lc_id}.md').write_text(md)
+            (out_dir / f'{lc_id}.md').write_text(md)
             ok += 1
-            print(f'  wrote {lc_id}.md')
+            print(f'  wrote {sub}/lightcone/{lc_id}.md')
         except Exception as e:
             errors.append((lc_id, repr(e)))
     print(f'Generated {ok} files. Errors: {len(errors)}')

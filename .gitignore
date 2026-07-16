@@ -68,3 +68,6 @@ yarn-error.log
 
 # Skill-dev eval tooling (one-off, needs external skill-creator harness)
 evals/
+
+# 测试服草稿（gen_*_nanoka.py --beta 输出；未上正式服，不入库）
+drafts/
