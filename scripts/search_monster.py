@@ -93,15 +93,26 @@ def print_detail(ver, r):
         v = d.get(k)
         return v if v is not None else '—'
 
-    print(f"- 弱点属性：{elems(base.get('stance_weak_list') or r['weak'])}")
+    def res_str(c):
+        return '、'.join(f"{ELEM_CN.get(x['damage_type'], x['damage_type'])}{int(x['value']*100)}%"
+                         for x in (c.get('damage_type_resistance') or []))
+
+    # 变种可能弱点/抗性不同（如金人司阍 12 变种 5 种弱点）→ 判断是否统一
+    uniform_weak = len({tuple(c.get('stance_weak_list') or []) for c in children}) <= 1
+    uniform_res = len({res_str(c) for c in children}) <= 1
+
+    if uniform_weak:
+        print(f"- 弱点属性：{elems(base.get('stance_weak_list') or r['weak'])}")
+    else:
+        print("- 弱点属性：**各变种不同**（见下方「变种」）")
     print(f"- 基础属性：HP {g('hp_base')} / 攻 {g('attack_base')} / 防 {g('defence_base')} / 速 {g('speed_base')}")
     print(f"- 韧性：{g('stance_base')}（韧性条 {g('stance_count')}） · 效果抵抗：{d.get('status_resistance_base') or 0}"
           + (f" · 相位数：{d['max_monster_phase']}" if d.get('max_monster_phase') else ''))
 
-    res = base.get('damage_type_resistance') or []
-    if res:
-        parts = [f"{ELEM_CN.get(x['damage_type'], x['damage_type'])} {int(x['value']*100)}%" for x in res]
-        print(f"- 属性抗性：{'、'.join(parts)}（未列出即 0%，多为弱点）")
+    if uniform_res and res_str(base):
+        print(f"- 属性抗性：{res_str(base)}（未列出即 0%，多为弱点）")
+    elif not uniform_res:
+        print("- 属性抗性：**各变种不同**（见下方「变种」）")
 
     skills = {}
     for c in children:
@@ -115,8 +126,13 @@ def print_detail(ver, r):
             print(f"    · {nm}：{de}")
 
     if len(children) > 1:
-        print(f"- 变体（{len(children)} 个）：")
+        print(f"- 变种（{len(children)} 个）：")
         for c in children:
+            fields = []
+            if not uniform_weak:
+                fields.append(f"弱点 {elems(c.get('stance_weak_list'))}")
+            if not uniform_res:
+                fields.append(f"抗性 {res_str(c) or '全0%'}")
             mods = []
             for k, lab in [('hp_modify_ratio', 'HP'), ('attack_modify_ratio', '攻'),
                            ('defence_modify_ratio', '防'), ('speed_modify_ratio', '速'),
@@ -124,7 +140,9 @@ def print_detail(ver, r):
                 v = c.get(k)
                 if v not in (1, None):
                     mods.append(f"{lab}×{v:g}")
-            print(f"    · {c['id']}：{'、'.join(mods) if mods else '基准'}")
+            if mods:
+                fields.append('、'.join(mods))
+            print(f"    · {c['id']}：{' | '.join(fields) if fields else '基准'}")
 
     if r['desc']:
         print(f"- 描述：{r['desc']}")
