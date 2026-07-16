@@ -98,7 +98,7 @@ python3 scripts/search_monster.py --rank BigBoss
 python3 scripts/search_monster.py 冰锋 --json
 ```
 
-显示弱点、韧性、相位、基础属性、逐属性抗性、**技能/被动机制**、变体倍率。技能描述多为定性（少量/大量），**无精确倍率**（要倍率查 BWiki）。
+显示弱点、韧性、相位、基础属性、逐属性抗性、**技能/被动机制**、变体倍率。技能描述多为定性（少量/大量），**无精确倍率**（敌人技能倍率玩家端基本查不到，BWiki 亦无）。
 
 ## mihomo_to_config.py
 

@@ -13,7 +13,8 @@ Usage:
   uv run python3 scripts/search_monster.py 冰锋 --limit 10 --json
 
 说明：含技能/被动机制描述与逐属性抗性、变体倍率；但技能描述多为定性（少量/大量），
-无精确倍率数值。要精确伤害倍率仍需查 BWiki。
+无精确伤害倍率——敌人技能倍率玩家端基本查不到（BWiki 同样只有定性描述），需
+MonsterSkillConfig 原始挖矿数据，而该数据源已随 DMCA 冻结。
 """
 import json, re, sys, argparse, urllib.request
 
