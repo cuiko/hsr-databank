@@ -26,7 +26,8 @@ python3 scripts/<name>.py
 > **兜底脚本用途**：联动/新版本刚上线时 Mar-7th StarRailRes 常滞后数天，此时原 `gen_*.py`
 > 会 KeyError。改用 `gen_*_nanoka.py <id>` 从 nanoka 测试站生成；SRR 追上后可用原脚本重生成交叉校验。
 >
-> **`--beta` / `--dry-run`**（仅 nanoka 兜底脚本）：
+> **`--source` / `--beta` / `--dry-run`**（仅 nanoka 兜底脚本）：
+> - `--source X`：选数据源,默认 **nanoka**(完整可用)。`gachabase` / `huroka` 已注册为占位、暂未实现;新增一个源 = 实现对应加载/生成函数并注册进脚本里的 `SOURCE_LOADERS` / `SOURCE_GEN`。
 > - `--beta`：输出到 `drafts/`（已 gitignore）而非 `references/`，把**测试服/未上线**内容本地缓存、不入库。
 >   **不带 ID 时自动**从 nanoka `manifest.json` 的 `new` 字段取测试服新增,并让 `drafts/` **只保留这些新内容**（过时的自动清除）。
 > - `--dry-run`：只打印将写入/清理哪些文件，**不落盘**（配合自动清理时先看会删什么）。

@@ -12,6 +12,7 @@ Usage:
   python3 scripts/gen_lightcone_nanoka.py --beta --dry-run  # 只打印计划
 
 Flags:
+  --source X  数据源，默认 nanoka（可扩展 gachabase/huroka，见 SOURCE_GEN）
   --beta      输出到 drafts/（gitignore）；不带 ID 时自动从 manifest.new 取测试服新增
   --dry-run   只打印计划，不落盘
 """
@@ -163,8 +164,36 @@ def gen_lightcone(lc_id):
     return md
 
 
+# 数据源注册表：name -> gen_lightcone(lid) 生成函数（值为 None 表示占位未实现）。
+# 新增数据源 = 实现 gen_lightcone_<source>(lid) 并在此注册。
+SOURCE_GEN = {
+    'nanoka': gen_lightcone,   # 已实现
+    'gachabase': None,         # TODO: GachaBase
+    'huroka': None,            # TODO: Huroka
+}
+
+
+def _parse_source(argv):
+    """抽出 --source（支持 `--source X` 与 `--source=X`），默认 nanoka；返回 (source, 剩余argv)。"""
+    source, rest, i = 'nanoka', [], 0
+    while i < len(argv):
+        a = argv[i]
+        if a == '--source' and i + 1 < len(argv):
+            source = argv[i + 1]; i += 2; continue
+        if a.startswith('--source='):
+            source = a.split('=', 1)[1]; i += 1; continue
+        rest.append(a); i += 1
+    return source, rest
+
+
 def main():
-    args = sys.argv[1:]
+    source, args = _parse_source(sys.argv[1:])
+    gen_fn = SOURCE_GEN.get(source)
+    if gen_fn is None:
+        impl = [k for k, v in SOURCE_GEN.items() if v]
+        print(f"数据源 '{source}' 尚未实现（目前仅：{impl}）。"
+              f"扩展：写 gen_lightcone_<source>(lid) 并注册进 SOURCE_GEN。", file=sys.stderr)
+        sys.exit(2)
     beta = '--beta' in args    # 测试服内容：输出到 drafts/（已 gitignore），不入库
     dry = '--dry-run' in args  # 只打印计划，不写盘/不删除
     ids = [a for a in args if not a.startswith('--')]
@@ -175,7 +204,7 @@ def main():
         ids = [str(x) for x in new.get('lightcone', [])]
         print(f'--beta 自动：测试服新增光锥 {ids}')
     if not ids:
-        print('Usage: gen_lightcone_nanoka.py [--beta] [--dry-run] [id ...]'
+        print('Usage: gen_lightcone_nanoka.py [--source nanoka] [--beta] [--dry-run] [id ...]'
               '  (--beta 不带 ID = 自动取测试服新增)', file=sys.stderr)
         sys.exit(1)
     sub = 'drafts' if beta else 'references'
@@ -188,7 +217,7 @@ def main():
     for lc_id in ids:
         lc_id = str(lc_id)
         try:
-            md = gen_lightcone(lc_id)
+            md = gen_fn(lc_id)
             if not dry:
                 (out_dir / f'{lc_id}.md').write_text(md)
             ok += 1

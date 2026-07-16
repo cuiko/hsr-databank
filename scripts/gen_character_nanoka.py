@@ -16,6 +16,7 @@ Usage:
   python3 scripts/gen_character_nanoka.py --beta --dry-run # 只打印计划，不写盘/不删除
 
 Flags:
+  --source X  数据源，默认 nanoka（可扩展 gachabase/huroka，见 SOURCE_LOADERS）
   --beta      输出到 drafts/（gitignore，不入库）；不带 ID 时自动从 manifest.new 取测试服新增
   --dry-run   只打印将写入/清理哪些文件，不实际落盘
 
@@ -638,8 +639,36 @@ def gen_character(cid):
     return md
 
 
+# 数据源注册表：name -> 把该源数据适配进 CHARS/PROMO/SKILLS/RANKS/TREES 的加载函数。
+# 新增数据源 = 实现一个 load_char_<source>(cid) 并在此注册（值为 None 表示占位未实现）。
+SOURCE_LOADERS = {
+    'nanoka': load_char,   # 已实现：从 nanoka 静态 JSON 适配
+    'gachabase': None,     # TODO: GachaBase（Next.js SSR 内嵌 JSON）
+    'huroka': None,        # TODO: Huroka（SPA）
+}
+
+
+def _parse_source(argv):
+    """抽出 --source（支持 `--source X` 与 `--source=X`），默认 nanoka；返回 (source, 剩余argv)。"""
+    source, rest, i = 'nanoka', [], 0
+    while i < len(argv):
+        a = argv[i]
+        if a == '--source' and i + 1 < len(argv):
+            source = argv[i + 1]; i += 2; continue
+        if a.startswith('--source='):
+            source = a.split('=', 1)[1]; i += 1; continue
+        rest.append(a); i += 1
+    return source, rest
+
+
 def main():
-    args = sys.argv[1:]
+    source, args = _parse_source(sys.argv[1:])
+    loader = SOURCE_LOADERS.get(source)
+    if loader is None:
+        impl = [k for k, v in SOURCE_LOADERS.items() if v]
+        print(f"数据源 '{source}' 尚未实现（目前仅：{impl}）。"
+              f"扩展：写 load_char_<source>(cid) 并注册进 SOURCE_LOADERS。", file=sys.stderr)
+        sys.exit(2)
     beta = '--beta' in args    # 测试服内容：输出到 drafts/（已 gitignore），不入库
     dry = '--dry-run' in args  # 只打印计划，不写盘/不删除
     ids = [a for a in args if not a.startswith('--')]
@@ -650,7 +679,7 @@ def main():
         ids = [str(x) for x in new.get('character', [])]
         print(f'--beta 自动：测试服新增角色 {ids}')
     if not ids:
-        print('Usage: gen_character_nanoka.py [--beta] [--dry-run] [id ...]'
+        print('Usage: gen_character_nanoka.py [--source nanoka] [--beta] [--dry-run] [id ...]'
               '  (--beta 不带 ID = 自动取测试服新增)', file=sys.stderr)
         sys.exit(1)
     sub = 'drafts' if beta else 'references'
@@ -663,7 +692,7 @@ def main():
     for cid in ids:
         cid = str(cid)
         try:
-            load_char(cid)
+            loader(cid)
             md = gen_character(cid)
             if md:
                 if not dry:
