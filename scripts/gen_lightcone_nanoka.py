@@ -115,7 +115,7 @@ def gen_lightcone(lc_id):
     lv = rf.get('level', {})
     params_list = [lv[str(i)].get('param_list', []) for i in range(1, 6) if str(i) in lv]
 
-    md = f'''# {name} — ID {lc_id}
+    md = f'''# {name}
 
 > 数据来源：[nanoka](https://hsr.nanoka.cc/lightcone/{lc_id})（测试站 {NANOKA_VER} 数据）
 

@@ -1,4 +1,4 @@
-# 希儿 (加强状态) — ID 1102
+# 希儿 (加强状态)
 
 > 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) + nanoka.cc。
 > 未加强状态见 [`1102.md`](1102.md)。

@@ -563,7 +563,7 @@ def gen_character(cid):
     elation_pid = get_elation_priority(cid) if path == '欢愉' else None
     elation_row = f'\n| 参演编号 | {elation_pid} |' if elation_pid is not None else ''
 
-    md = f'''# {name} — ID {cid}
+    md = f'''# {name}
 
 > 数据来源：[nanoka](https://hsr.nanoka.cc/character/{cid})（测试站 {NANOKA_VER} 数据）
 

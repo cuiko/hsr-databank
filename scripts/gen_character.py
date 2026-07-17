@@ -400,7 +400,7 @@ def gen_character(cid):
     elation_pid = get_elation_priority(cid) if path == '欢愉' else None
     elation_row = f'\n| 参演编号 | {elation_pid} |' if elation_pid is not None else ''
 
-    md = f'''# {name} — ID {cid}
+    md = f'''# {name}
 
 > 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes)（cn 索引）
 
@@ -495,7 +495,7 @@ def gen_enhanced(cid):
     elation_pid = get_elation_priority(cid) if path == '欢愉' else None
     elation_row = f'\n| 参演编号 | {elation_pid} |' if elation_pid is not None else ''
 
-    md = f'''# {name} (加强状态) — ID {cid}
+    md = f'''# {name} (加强状态)
 
 > 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) + nanoka.cc。
 > 未加强状态见 [`{cid}.md`]({cid}.md)。

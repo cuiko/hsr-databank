@@ -91,7 +91,7 @@ def gen_lightcone(lc_id):
     skill_desc = rank.get('desc', '')
     params_list = rank.get('params', [])
     
-    md = f'''# {name} — ID {lc_id}
+    md = f'''# {name}
 
 > 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes)（cn 索引）
 
