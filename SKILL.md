@@ -29,7 +29,7 @@ description: |
 本知识库包含：
 
 1. **本文档（SKILL.md）**：游戏通用机制、术语、战斗流程、终局内容规则的常驻概览与查找入口。
-2. **`references/`**：静态档案与深度参考——从 [Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) 自动生成的角色 / 光锥 / 映射表，以及按需查阅的 [`formulas.md`](references/formulas.md)（完整伤害公式体系）、[`battle-sim.md`](references/battle-sim.md)（战斗模拟配置规范）。
+2. **`references/`**：静态档案与深度参考——自动生成的角色 / 光锥 / 怪物 / 映射表，以及按需查阅的 [`formulas.md`](references/formulas.md)（完整伤害公式体系）、[`battle-sim.md`](references/battle-sim.md)（战斗模拟配置规范）。
 3. **`scripts/`**：可复用工具脚本（成就搜索、角色/光锥数据生成、UID 转 config 等）。
 4. **`assets/`**：模板等静态资源。
 5. **`assets/formulas/`**：伤害公式可视化参考图片。
@@ -50,7 +50,7 @@ description: |
 | 成就搜索（基础信息）| `scripts/search_achievement.py <keyword>` |
 | 单个成就的相关任务 / 所属版本 | BWiki 搜索 `https://searchwiki.biligame.com/sr/index.php?search=<成就名>`（仅深度问时拉）|
 | 玩家展柜（按 UID） | `https://api.mihomo.me/sr_info_parsed/{UID}?l=cn`（UA: `hsr-databank`） |
-| 怪物/敌人（弱点/韧性/相位/属性/抗性/技能机制/变体） | `scripts/search_monster.py <关键字\|id>`（技能描述定性,无精确倍率） |
+| 怪物/敌人（弱点/韧性/相位/属性/抗性/技能/变种） | `references/monster/{id}.md`；按名搜用 `scripts/search_monster.py <关键字>`（技能描述定性,无精确倍率） |
 | 终局关卡敌人/buff | nanoka.cc（混沌回忆 `/maze`、虚构叙事 `/story`、末日幻影 `/boss`、异相仲裁 `/peak`） |
 | 静态游戏数据兜底 | `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn/{file}.json` |
 
@@ -77,7 +77,8 @@ description: |
 `scripts/` 目录中的可复用脚本（详见 [`scripts/README.md`](scripts/README.md)）：
 
 - `search_achievement.py` — 搜索 nanoka 在线成就库（关键字/系列/隐藏筛选）
-- `search_monster.py` — 查询怪物（弱点/韧性/相位/基础属性；关键字或 ID）
+- `search_monster.py` — 在线搜索怪物（关键字/ID；弱点/韧性/技能/变种）
+- `gen_monster.py` — 生成/刷新 `references/monster/{id}.md` 怪物档案（`--all` 全量）
 - `gen_character.py` / `gen_lightcone.py` — 重新拉取并刷新 `references/`（SRR 冻结时用 `gen_*_nanoka.py`）
 - `mihomo_to_config.py` — 通过玩家 UID 生成战斗模拟器 `config.json`
 

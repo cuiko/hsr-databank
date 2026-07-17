@@ -114,16 +114,24 @@ def print_detail(ver, r):
     elif not uniform_res:
         print("- 属性抗性：**各变种不同**（见下方「变种」）")
 
+    # 同名技能可能有不同描述（触发成功/失败等），按 名→去重描述列表 收集
     skills = {}
     for c in children:
         for s in c.get('skill_list') or []:
             nm = re.sub(r'<[^>]+>', '', s.get('skill_name', '') or '')
             de = re.sub(r'<[^>]+>', '', s.get('skill_desc', '') or '')
-            skills.setdefault(nm, de)
+            lst = skills.setdefault(nm, [])
+            if de not in lst:
+                lst.append(de)
     if skills:
         print(f"- 技能（{len(skills)}）：")
-        for nm, de in skills.items():
-            print(f"    · {nm}：{de}")
+        for nm, descs in skills.items():
+            if len(descs) == 1:
+                print(f"    · {nm}：{descs[0]}")
+            else:
+                print(f"    · {nm}：")
+                for de in descs:
+                    print(f"        - {de}")
 
     if len(children) > 1:
         print(f"- 变种（{len(children)} 个）：")
