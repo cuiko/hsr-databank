@@ -145,15 +145,36 @@ def gen_monster(mid):
     return md
 
 
+def gen_index():
+    """生成 references/mapping-monster.md：怪物名 ↔ ID 速查表（名称链到 monster/{id}.md）。"""
+    rows = []
+    for mid in sorted(INDEX, key=lambda x: int(x) if x.isdigit() else 0):
+        m = INDEX[mid]
+        name = clean(m.get('zh') or '') or mid
+        rank = RANK_CN.get(m.get('rank'), m.get('rank') or '—')
+        rows.append(f"| {mid} | [{name}](monster/{mid}.md) | {rank} | {elems(m.get('weak'))} |")
+    return (f"# 怪物映射表\n\n"
+            f"> 名称链接到 `references/monster/{{id}}.md`；数据源 nanoka（{NANOKA_VER}），共 {len(INDEX)} 个。\n\n"
+            f"| ID | 名称 | 类型 | 弱点 |\n|----|------|------|------|\n"
+            + "\n".join(rows) + "\n")
+
+
 def main():
     args = sys.argv[1:]
     dry = '--dry-run' in args
+    if '--index' in args:
+        md = gen_index()
+        if not dry:
+            (ROOT / 'references' / 'mapping-monster.md').write_text(md)
+        print(f"{'[dry-run] ' if dry else ''}wrote references/mapping-monster.md ({len(INDEX)} 行)")
+        if not ('--all' in args or [a for a in args if not a.startswith('--')]):
+            return
     allm = '--all' in args
     ids = [a for a in args if not a.startswith('--')]
     if allm:
         ids = sorted(INDEX.keys(), key=lambda x: int(x) if x.isdigit() else 0)
     if not ids:
-        print('Usage: gen_monster.py [--all] [--dry-run] [id ...]', file=sys.stderr)
+        print('Usage: gen_monster.py [--all] [--index] [--dry-run] [id ...]', file=sys.stderr)
         sys.exit(1)
     out_dir = ROOT / 'references' / 'monster'
     if not dry:

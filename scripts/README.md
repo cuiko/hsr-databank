@@ -112,9 +112,12 @@ python3 scripts/gen_monster.py --all
 
 # 只报计划不写盘
 python3 scripts/gen_monster.py --all --dry-run
+
+# 生成怪物名↔ID 速查表 references/mapping-monster.md
+python3 scripts/gen_monster.py --index
 ```
 
-把怪物档案落地为 md（含弱点/韧性/相位/属性/抗性/技能/变种）。`search_monster.py` 是在线即查，`gen_monster.py` 是落地成库。
+把怪物档案落地为 md（含弱点/韧性/相位/属性/抗性/技能/变种）。`search_monster.py` 是在线即查，`gen_monster.py` 是落地成库；`--index` 另出一张名↔ID 映射速查表。
 
 ## mihomo_to_config.py
 
