@@ -155,6 +155,15 @@ def gen_index():
         rows.append(f"| {mid} | [{name}](monster/{mid}.md) | {rank} | {elems(m.get('weak'))} |")
     return (f"# 怪物映射表\n\n"
             f"> 名称链接到 `references/monster/{{id}}.md`；数据源 nanoka（{NANOKA_VER}），共 {len(INDEX)} 个。\n\n"
+            f"## 用法\n\n"
+            f"本表用于「怪物名 ↔ ID」速查：拿到 ID 后读 `references/monster/{{id}}.md` 取完整档案"
+            f"（弱点/韧性/相位/抗性/技能/变种）。\n\n"
+            f"- **表很长，别整表通读**：按关键字/弱点/类型用 `scripts/search_monster.py <关键字>` 精确定位，"
+            f"或在本表内检索名称。\n"
+            f"- **同名多条目**：同一名称常有多个 ID（不同关卡/难度/变种，如「银鬃尉官（完整）」「银鬃尉官（错误）」），"
+            f"按类型与弱点区分，逐一确认再取档案。\n"
+            f"- 表按 ID 升序排列，非按类型分组。\n\n"
+            f"## 速查表\n\n"
             f"| ID | 名称 | 类型 | 弱点 |\n|----|------|------|------|\n"
             + "\n".join(rows) + "\n")
 
