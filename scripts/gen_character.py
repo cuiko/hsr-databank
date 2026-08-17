@@ -244,7 +244,16 @@ def get_eidolon_boosts(cid):
     e5_boosts = {b['id']: b['num'] for b in e5.get('level_up_skills', [])}
     return e3_boosts, e5_boosts
 
-SKILL_ORDER = ['普攻','强化普攻','战技','强化战技','终结技','强化终结技','天赋','欢愉技','秘技']
+SKILL_ORDER = ['普攻','强化普攻','战技','强化战技','终结技','强化终结技','天赋','欢愉技','秘技','助战技']
+
+# 人工补充：协议模式的队友触发说明（nanoka/SRR 数据源均无，此处固化以扛住重生成）
+PROTOCOL_MODE_INTRO = {
+    '1510': (
+        '> 姬子•启行外的**开拓同行角色**施放助战技「开拓，与你同行」时，会根据该队友触发以下其中一种协议模式：\n'
+        '> - **裁决**：开拓者（所有形态）、丹恒、丹恒•饮月、丹恒•腾荒、星期日\n'
+        '> - **歼破**：三月七、三月七•巡猎、长夜月、瓦尔特、姬子'
+    ),
+}
 
 def tree_ultimate_ids(cid):
     """从 nanoka skill_trees 的终结技节点取规范终结技 ID 列表（按盘面顺序）。
@@ -299,6 +308,13 @@ def build_skill_map(char, prefix, cid=None):
         elif type_text == '天赋': skill_map.setdefault('天赋', sid)
         elif type_text == '秘技': skill_map.setdefault('秘技', sid)
         elif type_text == '欢愉技': skill_map.setdefault('欢愉技', sid)
+        elif type_text == '助战技':  # 4.4 新增技能类型（姬子•启行等），可有多个
+            dsc = s.get('desc', '')
+            # 「进入【…】状态」型助战技本质是模式/状态（如姬子的裁决/歼破），单列到协议模式
+            if '进入【' in dsc and '状态' in dsc:
+                skill_map.setdefault('协议模式', []).append(sid)
+            else:
+                skill_map.setdefault('助战技', []).append(sid)
     if cid:
         enh_ult = detect_enhanced_ult(cid)
         if enh_ult and enh_ult in SKILLS:
@@ -441,8 +457,18 @@ def gen_character(cid):
     md += '\n---\n\n## 技能\n\n'
     for label in SKILL_ORDER:
         sid = skill_map.get(label)
-        if sid:
-            md += gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=cid)
+        if not sid:
+            continue
+        for one in (sid if isinstance(sid, list) else [sid]):
+            md += gen_skill_section(label, one, e3_boosts, e5_boosts, cid=cid)
+    modes = skill_map.get('协议模式')
+    if modes:
+        md += '## 协议模式\n\n'
+        intro = PROTOCOL_MODE_INTRO.get(cid)
+        if intro:
+            md += intro.rstrip() + '\n\n'
+        for one in modes:
+            md += gen_skill_section('协议模式', one, e3_boosts, e5_boosts, cid=cid)
     if abils:
         md += '## 附加能力\n\n'
         for i, a in enumerate(abils, 1):
@@ -552,8 +578,10 @@ def gen_enhanced(cid):
         md += '---\n\n## 技能（加强状态）\n\n'
         for label in SKILL_ORDER:
             sid = enh_skill_map.get(label)
-            if sid:
-                md += gen_skill_section(label, sid, e3_b, e5_b, cid=cid)
+            if not sid:
+                continue
+            for one in (sid if isinstance(sid, list) else [sid]):
+                md += gen_skill_section(label, one, e3_b, e5_b, cid=cid)
 
     # 附加能力（与未加强状态一致）
     if abils:
