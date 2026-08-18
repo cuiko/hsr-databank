@@ -1,6 +1,6 @@
 # 怪物映射表
 
-> 名称链接到 `references/monster/{id}.md`；数据源 nanoka（4.4.51），共 628 个。
+> 名称链接到 `references/monster/{id}.md`；数据源 nanoka（4.4.55），共 628 个。
 
 ## 用法
 
