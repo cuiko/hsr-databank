@@ -24,6 +24,7 @@ python3 scripts/<name>.py
 | `search_monster.py` | 在线搜索怪物：弱点/韧性/技能/变种（关键字/ID,不落地）|
 | `gen_monster.py` | 生成 `references/monster/{id}.md` 怪物档案（`--all` 全量 628 个）|
 | `mihomo_to_config.py` | 通过 MiHoMo API 将玩家 UID 转为战斗模拟器 config.json |
+| `ci_refresh.py` | CI 增量刷新：检测正式服(SRR)已收录、本地缺失的角色/光锥并补齐（`--dry-run`/`--with-monsters`）|
 
 > **兜底脚本用途**：联动/新版本刚上线时 Mar-7th StarRailRes 常滞后数天，此时原 `gen_*.py`
 > 会 KeyError。改用 `gen_*_nanoka.py <id>` 从 nanoka 测试站生成；SRR 追上后可用原脚本重生成交叉校验。
@@ -128,3 +129,24 @@ python3 scripts/mihomo_to_config.py 104635151
 # 写入文件
 python3 scripts/mihomo_to_config.py 104635151 config.json
 ```
+
+## ci_refresh.py
+
+供 `.github/workflows/refresh-skill-data.yml` 调用的增量刷新编排：检测正式服
+（Mar-7th StarRailRes）已收录、本地 `references/` 缺失的角色/光锥并逐个补齐。
+只补新增、不整库重生成，请求量小、规避限流；角色/光锥走 SRR（跟正式服），不会
+提前引入测试服 beta。
+
+```bash
+# 只检测缺口，不生成
+python3 scripts/ci_refresh.py --dry-run
+
+# 补齐缺失角色/光锥
+python3 scripts/ci_refresh.py
+
+# 额外刷新怪物索引 mapping-monster.md（拉 nanoka 测试服版本）
+python3 scripts/ci_refresh.py --with-monsters
+```
+
+> 手动/定时触发见 `.github/workflows/refresh-skill-data.yml`（默认仅手动；定时块留了可
+> 自定义的 cron 注释）。改动以 PR 交付，合并前人工核对生成局限。
