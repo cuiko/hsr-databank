@@ -1,6 +1,6 @@
 <h1 align="center">HSR Data Bank</h1>
 
-<p align="center">当前智库版本: v4.4</p>
+<p align="center">当前智库版本: v4.5</p>
 
 崩坏：星穹铁道 (Honkai: Star Rail) 游戏知识库 —— 可作为 AI agent 的 skill / knowledge base 使用。
 

@@ -101,6 +101,9 @@ def load_char(cid):
     ranks = d.get('ranks', {})
     rank_ids = [str(ranks[str(i)]['id']) for i in range(1, 7) if str(i) in ranks]
     skill_ids = [str(k) for k in d.get('skills', {}).keys()]
+    # 忆灵（memosprite）技能：nanoka 放在独立的 memosprite.skills，并入技能列表供 build_memosprite_map 收集
+    memo_skills = (d.get('memosprite') or {}).get('skills') or {}
+    skill_ids += [str(k) for k in memo_skills.keys()]
     tree_ids = [str(pv['1']['point_id']) for pv in d.get('skill_trees', {}).values() if '1' in pv]
 
     name = strip_tags(d['name'])
@@ -126,7 +129,7 @@ def load_char(cid):
     }
     PROMO[cid] = {'values': vals}
 
-    for sid, s in d.get('skills', {}).items():
+    for sid, s in list(d.get('skills', {}).items()) + list(memo_skills.items()):
         lv = s.get('level', {})
         maxl = len(lv)
         params = [lv[str(i)].get('param_list', []) for i in range(1, maxl + 1) if str(i) in lv]
@@ -195,6 +198,9 @@ def get_nanoka_skill(cid, sid):
     sid = str(sid)
     if sid in skills:
         return skills[sid]
+    memo = (d.get('memosprite') or {}).get('skills') or {}
+    if sid in memo:  # 忆灵技能的削韧/能量/战技点元信息在 memosprite.skills 里
+        return memo[sid]
     if sid.startswith('1') and len(sid) > 6:
         base = sid[1:]
         if base in skills:
@@ -472,6 +478,20 @@ def build_skill_map(char, prefix, cid=None):
     return skill_map
 
 
+def build_memosprite_map(char, cid):
+    """记忆命途角色的忆灵（memosprite）技能。nanoka 放在 memosprite.skills，load_char 已并入
+    SKILLS 与 char['skills']；技能 ID 形如 '1'+cid+槽位，type_text 为 忆灵技/忆灵天赋。
+    返回 {'忆灵技': [...], '忆灵天赋': [...]}。"""
+    memo = {'忆灵技': [], '忆灵天赋': []}
+    for sid in char.get('skills', []):
+        if not sid.startswith('1' + cid):
+            continue
+        tt = SKILLS.get(sid, {}).get('type_text', '')
+        if tt in memo:
+            memo[tt].append(sid)
+    return memo
+
+
 def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
     s = SKILLS.get(sid, {})
     if not s:
@@ -520,11 +540,14 @@ def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
         if not placeholders:
             md += '---\n\n'
             return md
+        # 星魂行仅在等级确实高于上一行时才加（忆灵技等 max_level=10 会被星魂加成顶到与 E0 同级）
         levels = [(base_lv, '满级 (E0)')]
-        if e3_b > 0:
-            levels.append((min(max_lvl, base_lv + e3_b), '星魂 3'))
-        if e5_b > 0:
-            levels.append((min(max_lvl, base_lv + e3_b + e5_b), '星魂 5'))
+        lv3 = min(max_lvl, base_lv + e3_b)
+        if e3_b > 0 and lv3 > levels[-1][0]:
+            levels.append((lv3, '星魂 3'))
+        lv5 = min(max_lvl, base_lv + e3_b + e5_b)
+        if e5_b > 0 and lv5 > levels[-1][0]:
+            levels.append((lv5, '星魂 5'))
         param_pcts = [is_pct_param(desc, p) for p in placeholders]
         headers = ['等级', '解锁条件'] + [f'参数 {p}{"(%)" if pct else ""}' for p, pct in zip(placeholders, param_pcts)]
         md += '| ' + ' | '.join(headers) + ' |\n'
@@ -616,6 +639,12 @@ def gen_character(cid):
             md += intro.rstrip() + '\n\n'
         for one in modes:
             md += gen_skill_section('协议模式', one, e3_boosts, e5_boosts, cid=cid)
+    memo = build_memosprite_map(char, cid)
+    if memo['忆灵技'] or memo['忆灵天赋']:
+        md += '## 忆灵\n\n'
+        for label in ('忆灵技', '忆灵天赋'):
+            for sid in memo[label]:
+                md += gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=cid)
     if abils:
         md += '## 附加能力\n\n'
         for i, a in enumerate(abils, 1):
