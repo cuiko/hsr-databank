@@ -321,6 +321,19 @@ def build_skill_map(char, prefix, cid=None):
             skill_map['强化终结技'] = enh_ult
     return skill_map
 
+def build_memosprite_map(char, cid):
+    """记忆命途角色的忆灵（memosprite）技能。技能 ID 形如 '1'+cid+槽位（如 1512 → 1151201），
+    type_text 为 忆灵技/忆灵天赋。与加强状态同用 '1'+cid 前缀，但加强态技能仍是普攻/战技等，
+    故靠 type_text 区分即可，不会误收。返回 {'忆灵技': [...], '忆灵天赋': [...]}。"""
+    memo = {'忆灵技': [], '忆灵天赋': []}
+    for sid in char.get('skills', []):
+        if not sid.startswith('1' + cid):
+            continue
+        tt = SKILLS.get(sid, {}).get('type_text', '')
+        if tt in memo:
+            memo[tt].append(sid)
+    return memo
+
 def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
     s = SKILLS.get(sid, {})
     if not s: return ''
@@ -370,12 +383,15 @@ def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
         if not placeholders:
             md += '---\n\n'
             return md
-        # 等级
+        # 等级：星魂行仅在等级确实高于上一行时才加（忆灵技等 max_level=10 会被星魂加成顶到
+        # 与 E0 同级，此时不应产出冗余重复行）
         levels = [(base_lv, '满级 (E0)')]
-        if e3_b > 0:
-            levels.append((min(max_lvl, base_lv + e3_b), '星魂 3'))
-        if e5_b > 0:
-            levels.append((min(max_lvl, base_lv + e3_b + e5_b), '星魂 5'))
+        lv3 = min(max_lvl, base_lv + e3_b)
+        if e3_b > 0 and lv3 > levels[-1][0]:
+            levels.append((lv3, '星魂 3'))
+        lv5 = min(max_lvl, base_lv + e3_b + e5_b)
+        if e5_b > 0 and lv5 > levels[-1][0]:
+            levels.append((lv5, '星魂 5'))
         # 表头: 标注每个 placeholder 是否 %
         param_pcts = [is_pct_param(desc, p) for p in placeholders]
         headers = ['等级', '解锁条件'] + [f'参数 {p}{"(%)" if pct else ""}' for p, pct in zip(placeholders, param_pcts)]
@@ -469,6 +485,12 @@ def gen_character(cid):
             md += intro.rstrip() + '\n\n'
         for one in modes:
             md += gen_skill_section('协议模式', one, e3_boosts, e5_boosts, cid=cid)
+    memo = build_memosprite_map(char, cid)
+    if memo['忆灵技'] or memo['忆灵天赋']:
+        md += '## 忆灵\n\n'
+        for label in ('忆灵技', '忆灵天赋'):
+            for sid in memo[label]:
+                md += gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=cid)
     if abils:
         md += '## 附加能力\n\n'
         for i, a in enumerate(abils, 1):
