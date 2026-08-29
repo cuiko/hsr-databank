@@ -79,6 +79,11 @@ def main():
     if fails:
         # SRR 索引有、但完整数据缺（刚上线数天常见）——不视为致命，人工用 nanoka 兜底
         print(f'⚠️ 以下生成失败（可能 SRR 数据未齐，改用 gen_*_nanoka.py 兜底）：{fails}')
+
+    # 新角色/光锥入库后映射表常被漏更新，这里报出来（不阻断，PR 仍需人工补）
+    print('\n--- 一致性自检 ---')
+    subprocess.run([sys.executable, str(ROOT / 'scripts' / 'check_consistency.py'), '--warn'])
+
     print('done')
     return 0
 
