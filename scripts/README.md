@@ -25,6 +25,7 @@ python3 scripts/<name>.py
 | `gen_monster.py` | 生成 `references/monster/{id}.md` 怪物档案（`--all` 全量 628 个）|
 | `mihomo_to_config.py` | 通过 MiHoMo API 将玩家 UID 转为战斗模拟器 config.json |
 | `ci_refresh.py` | CI 增量刷新：检测正式服(SRR)已收录、本地缺失的角色/光锥并补齐（`--dry-run`/`--with-monsters`）|
+| `check_consistency.py` | 提交前自检：核对角色/光锥档案与 `mapping-char2lc.md` 是否同步（`--warn` 只报告）|
 
 > **兜底脚本用途**：联动/新版本刚上线时 Mar-7th StarRailRes 常滞后数天，此时原 `gen_*.py`
 > 会 KeyError。改用 `gen_*_nanoka.py <id>` 从 nanoka 测试站生成；SRR 追上后可用原脚本重生成交叉校验。
