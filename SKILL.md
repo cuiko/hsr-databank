@@ -22,7 +22,7 @@ description: |
 本知识库包含：
 
 1. **本文档（SKILL.md）**：游戏通用机制、术语、战斗流程、终局内容规则的常驻概览与查找入口。
-2. **`references/`**：静态档案与深度参考——自动生成的角色 / 光锥 / 怪物 / 映射表，以及按需查阅的 [`formulas.md`](references/formulas.md)（完整伤害公式体系）、[`battle-sim.md`](references/battle-sim.md)（战斗模拟配置规范）。
+2. **`references/`**：静态档案与深度参考——自动生成的角色 / 光锥档案与映射表，以及按需查阅的 [`formulas.md`](references/formulas.md)（完整伤害公式体系）、[`battle-sim.md`](references/battle-sim.md)（战斗模拟配置规范）。
 3. **`scripts/`**：可复用工具脚本（成就搜索、角色/光锥数据生成、UID 转 config 等）。
 4. **`assets/`**：模板等静态资源。
 5. **`assets/formulas/`**：伤害公式可视化参考图片。
@@ -43,8 +43,7 @@ description: |
 | 成就搜索（基础信息）| `scripts/search_achievement.py <keyword>` |
 | 单个成就的相关任务 / 所属版本 | BWiki 搜索 `https://searchwiki.biligame.com/sr/index.php?search=<成就名>`（仅深度问时拉）|
 | 玩家展柜（按 UID） | `https://api.mihomo.me/sr_info_parsed/{UID}?l=cn`（UA: `hsr-databank`） |
-| 怪物名 ↔ ID 速查 | [`references/mapping-monster.md`](references/mapping-monster.md)（名/类型/弱点，链到档案） |
-| 怪物/敌人（弱点/韧性/相位/属性/抗性/技能/变种） | `references/monster/{id}.md`；按名搜用 `scripts/search_monster.py <关键字>`（技能描述定性,无精确倍率） |
+| 怪物/敌人（弱点/韧性/相位/属性/抗性/技能/变种） | `scripts/search_monster.py <关键字或ID>` 在线查询（怪物数据不入库，见「数据来源」；技能描述定性，无精确倍率）|
 | 终局关卡敌人/buff | nanoka.cc（混沌回忆 `/maze`、虚构叙事 `/story`、末日幻影 `/boss`、异相仲裁 `/peak`） |
 | 静态游戏数据兜底 | `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/index_min/cn/{file}.json` |
 
@@ -72,7 +71,6 @@ description: |
 
 - `search_achievement.py` — 搜索 nanoka 在线成就库（关键字/系列/隐藏筛选）
 - `search_monster.py` — 在线搜索怪物（关键字/ID；弱点/韧性/技能/变种）
-- `gen_monster.py` — 生成/刷新 `references/monster/{id}.md` 怪物档案（`--all` 全量）
 - `gen_character.py` / `gen_lightcone.py` — 重新拉取并刷新 `references/`（SRR 冻结时用 `gen_*_nanoka.py`）
 - `mihomo_to_config.py` — 通过玩家 UID 生成战斗模拟器 `config.json`
 
@@ -88,12 +86,13 @@ description: |
 
 > **搜索零命中怎么解读**：`search_achievement.py` / `search_monster.py` 是关键字探针，**设计上会漏**——搜不到**不等于不存在**。零命中时先换个搜法再下结论：换官方名 / 别名 / 简称（玩家叫法常与游戏内名不一致）、只搜名字里的一个特征词、或改用 ID 精确查。若连一个**确定存在**的条目也搜不到，那是脚本或网络出了问题，而不是数据不存在——先拿已知条目验一下探针本身。都试过仍无结果时，如实说「未查到」并说明试过哪些关键字，别编造条目、也别把条目描述换个说法当成完成步骤。另：角色 / 光锥 / 遗器搜不到还可能是尚未上正式服的测试服内容，见下文「测试服内容」。
 
-> **改数据先改源、再重生成**：`references/` 下的角色 / 光锥 / 怪物档案是脚本从数据源（StarRailRes + nanoka）自动生成的**派生物**。数据需要更新时，跑对应生成器重新产出，别直接手改档案——手改会在下次生成时被静默覆盖，造成"改了又没改"。例外仅限源数据缺口需人工补的字段（如强化技能空描述，见 `CLAUDE.md`），这类改动补完后要留意别被整表重生成冲掉。
+> **改数据先改源、再重生成**：`references/` 下的角色 / 光锥档案是脚本从数据源（StarRailRes + nanoka）自动生成的**派生物**。数据需要更新时，跑对应生成器重新产出，别直接手改档案——手改会在下次生成时被静默覆盖，造成"改了又没改"。例外仅限源数据缺口需人工补的字段（如强化技能空描述，见 `CLAUDE.md`），这类改动补完后要留意别被整表重生成冲掉。
 
 ### 数据来源
 
 - 角色/光锥数据由 `scripts/` 下的脚本从 Mar-7th StarRailRes 自动生成
 - 成就数据通过 `scripts/search_achievement.py` 从 nanoka.cc 在线查询
+- 怪物/敌人数据**不入库**，通过 `scripts/search_monster.py` 从 nanoka.cc 在线查询——怪物条目多、同名变种密集（一个名字常有 6~8 个 ID），且每版新增；落地成档案只会带来版本滞后与挑错变种的风险，在线查永远是当前版本
 - 玩家面板通过 MiHoMo API 拉取
 
 ### 约定
