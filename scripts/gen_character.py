@@ -9,7 +9,7 @@ import json, re, sys, urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _hsr_common import NO_REGULAR_ENERGY
+from _hsr_common import NO_REGULAR_ENERGY, NAME_OVERRIDE
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / 'references' / 'character'
@@ -415,7 +415,7 @@ def gen_skill_section(label, sid, e3_boosts, e5_boosts, cid=None):
 def gen_character(cid):
     if int(cid) >= 8000: return None
     char = CHARS[cid]
-    name = char['name']
+    name = NAME_OVERRIDE.get(cid, char['name'])
     rarity = char['rarity']
     path = PATH_CN.get(char['path'], char['path'])
     element = ELEMENT_CN.get(char['element'], char['element'])
@@ -519,7 +519,7 @@ def gen_enhanced(cid):
     enh = get_enhanced_data(cid)
     if not enh: return None
     char = CHARS[cid]
-    name = char['name']
+    name = NAME_OVERRIDE.get(cid, char['name'])
     # 加强状态星魂 ID 形式：'1' + 常规 rank id（如常规 131003 → 加强 1131003）
     enh_e3_id = f'1{cid}03'
     enh_e5_id = f'1{cid}05'

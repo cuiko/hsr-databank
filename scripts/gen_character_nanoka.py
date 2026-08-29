@@ -28,7 +28,7 @@ import json, re, sys, urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _hsr_common import NO_REGULAR_ENERGY
+from _hsr_common import NO_REGULAR_ENERGY, NAME_OVERRIDE
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -106,7 +106,7 @@ def load_char(cid):
     skill_ids += [str(k) for k in memo_skills.keys()]
     tree_ids = [str(pv['1']['point_id']) for pv in d.get('skill_trees', {}).values() if '1' in pv]
 
-    name = strip_tags(d['name'])
+    name = NAME_OVERRIDE.get(cid) or strip_tags(d['name'])
     if '{' in name or not name:  # 开拓者名字为 {NICKNAME} 占位符 → 按命途命名（开拓者·毁灭 等）
         name = '开拓者·' + PATH_CN.get(d.get('base_type'), d.get('base_type') or '')
     CHARS[cid] = {
@@ -114,6 +114,9 @@ def load_char(cid):
         'path': d.get('base_type'), 'element': d.get('damage_type'),
         'max_sp': d.get('sp_need'), 'ranks': rank_ids, 'skills': skill_ids,
         'skill_trees': tree_ids,
+        # 显式记下哪些是忆灵技能：ID 不一定是 '1'+cid（开拓者·记忆的女性形态 8008 沿用
+        # 8007 的忆灵编号 18007xx），靠前缀推断会漏掉整段忆灵。
+        'memosprite_skills': [str(k) for k in memo_skills.keys()],
     }
 
     s6 = d['stats']['6']
@@ -483,9 +486,10 @@ def build_memosprite_map(char, cid):
     SKILLS 与 char['skills']；技能 ID 形如 '1'+cid+槽位，type_text 为 忆灵技/忆灵天赋。
     返回 {'忆灵技': [...], '忆灵天赋': [...]}。"""
     memo = {'忆灵技': [], '忆灵天赋': []}
-    for sid in char.get('skills', []):
-        if not sid.startswith('1' + cid):
-            continue
+    # 优先用 load_char 记下的显式清单；没有时才回退到 '1'+cid 前缀推断
+    explicit = char.get('memosprite_skills')
+    candidates = explicit if explicit else [s for s in char.get('skills', []) if s.startswith('1' + cid)]
+    for sid in candidates:
         tt = SKILLS.get(sid, {}).get('type_text', '')
         if tt in memo:
             memo[tt].append(sid)
