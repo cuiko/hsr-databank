@@ -9,7 +9,6 @@ CLAUDE.md「大版本更新流程」的补内容思路。角色/光锥走 SRR（
 用法：
   python3 scripts/ci_refresh.py                # 补缺角色/光锥
   python3 scripts/ci_refresh.py --dry-run      # 只报缺口，不生成/不写盘
-  python3 scripts/ci_refresh.py --with-monsters # 额外刷新 references/mapping-monster.md
 """
 import json
 import subprocess
@@ -54,7 +53,6 @@ def run_gen(script, ids):
 def main():
     args = sys.argv[1:]
     dry = '--dry-run' in args
-    with_monsters = '--with-monsters' in args
 
     # 角色排除 8xxx 开拓者变体（单独维护，不随此流程动）
     char_missing = find_missing('characters', 'character', keep=lambda k: int(k) < 8000)
@@ -72,9 +70,6 @@ def main():
         fails += [('character', i) for i in run_gen('gen_character.py', char_missing)]
     if lc_missing:
         fails += [('lightcone', i) for i in run_gen('gen_lightcone.py', lc_missing)]
-    if with_monsters:
-        print('刷新怪物索引 mapping-monster.md')
-        subprocess.run([sys.executable, str(ROOT / 'scripts' / 'gen_monster.py'), '--index'])
 
     if fails:
         # SRR 索引有、但完整数据缺（刚上线数天常见）——不视为致命，人工用 nanoka 兜底

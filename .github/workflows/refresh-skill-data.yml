@@ -15,10 +15,6 @@ on:
         description: '只检测缺口，不生成/不开 PR'
         type: boolean
         default: false
-      with_monsters:
-        description: '同时刷新 mapping-monster.md（拉 nanoka 测试服版本）'
-        type: boolean
-        default: false
   # schedule:
   #   - cron: '0 4 * * 1'   # ← 自定义：解开这两行并改成你要的时间（UTC）
 
@@ -39,8 +35,7 @@ jobs:
       - name: Incremental refresh (detect & generate missing)
         run: |
           python3 scripts/ci_refresh.py \
-            ${{ (github.event.inputs.dry_run == 'true') && '--dry-run' || '' }} \
-            ${{ (github.event.inputs.with_monsters == 'true') && '--with-monsters' || '' }}
+            ${{ (github.event.inputs.dry_run == 'true') && '--dry-run' || '' }}
 
       - name: Open PR if there are changes
         if: ${{ github.event.inputs.dry_run != 'true' }}
