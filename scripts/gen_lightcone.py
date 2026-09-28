@@ -93,7 +93,7 @@ def gen_lightcone(lc_id):
     
     md = f'''# {name}
 
-> 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes)（cn 索引）
+> 数据来源：[nanoka](https://hsr.nanoka.cc/lightcone/{lc_id})
 
 ## 基础信息
 

@@ -1,6 +1,6 @@
 # 镜流 (加强状态)
 
-> 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) + nanoka.cc。
+> 数据来源：[nanoka](https://hsr.nanoka.cc/character/1212)
 > 未加强状态见 [`1212.md`](1212.md)。
 
 ## 基础信息
