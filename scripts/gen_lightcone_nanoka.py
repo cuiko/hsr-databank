@@ -117,7 +117,7 @@ def gen_lightcone(lc_id):
 
     md = f'''# {name}
 
-> 数据来源：[nanoka](https://hsr.nanoka.cc/lightcone/{lc_id})（测试站 {NANOKA_VER} 数据）
+> 数据来源：[nanoka](https://hsr.nanoka.cc/lightcone/{lc_id})
 
 ## 基础信息
 
