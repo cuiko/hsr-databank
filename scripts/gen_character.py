@@ -434,7 +434,7 @@ def gen_character(cid):
 
     md = f'''# {name}
 
-> 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes)（cn 索引）
+> 数据来源：[nanoka](https://hsr.nanoka.cc/character/{cid})
 
 ## 基础信息
 
@@ -545,7 +545,7 @@ def gen_enhanced(cid):
 
     md = f'''# {name} (加强状态)
 
-> 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) + nanoka.cc。
+> 数据来源：[nanoka](https://hsr.nanoka.cc/character/{cid})
 > 未加强状态见 [`{cid}.md`]({cid}.md)。
 
 ## 基础信息

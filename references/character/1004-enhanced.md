@@ -1,6 +1,6 @@
 # 瓦尔特 (加强状态)
 
-> 数据来源：[Mar-7th StarRailRes](https://github.com/Mar-7th/StarRailRes) + nanoka.cc。
+> 数据来源：[nanoka](https://hsr.nanoka.cc/character/1004)
 > 未加强状态见 [`1004.md`](1004.md)。
 
 ## 基础信息
