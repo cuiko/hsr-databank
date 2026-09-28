@@ -592,7 +592,7 @@ def gen_character(cid):
 
     md = f'''# {name}
 
-> 数据来源：[nanoka](https://hsr.nanoka.cc/character/{cid})（测试站 {NANOKA_VER} 数据）
+> 数据来源：[nanoka](https://hsr.nanoka.cc/character/{cid})
 
 ## 基础信息
 
